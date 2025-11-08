@@ -96,39 +96,39 @@ SmartWork-Attendance-System/
 │  ├─ public/
 │  ├─ src/
 │  │  ├─ app/
-│  │  │  ├─ routes.jsx              
-│  │  │  └─ App.jsx
+│  │  │  ├─ routes.tsx              
+│  │  │  └─ App.tsx
 │  │  │
 │  │  ├─ layouts/
-│  │  │  ├─ AdminLayout.jsx         
-│  │  │  └─ EmployeeLayout.jsx      
+│  │  │  ├─ AdminLayout.tsx         
+│  │  │  └─ EmployeeLayout.tsx      
 │  │  │
 │  │  ├─ pages/
 │  │  │  ├─ auth/
-│  │  │  │  ├─ Login.jsx
-│  │  │  │  └─ Register.jsx
+│  │  │  │  ├─ Login.tsx
+│  │  │  │  └─ Register.tsx
 │  │  │  │
 │  │  │  ├─ admin/
-│  │  │  │  ├─ Dashboard.jsx
-│  │  │  │  ├─ Employees.jsx
+│  │  │  │  ├─ Dashboard.tsx
+│  │  │  │  ├─ Employees.tsx
 │  │  │  │  ├─ Reports.jsx
-│  │  │  │  └─ AttendanceManager.jsx
+│  │  │  │  └─ AttendanceManager.tsx
 │  │  │  │
 │  │  │  └─ employee/
-│  │  │     ├─ Profile.jsx
-│  │  │     ├─ CheckinCheckout.jsx
-│  │  │     ├─ AttendanceHistory.jsx
-│  │  │     └─ LeaveRequest.jsx
+│  │  │     ├─ Profile.tsx
+│  │  │     ├─ CheckinCheckout.tsx
+│  │  │     ├─ AttendanceHistory.tsx
+│  │  │     └─ LeaveRequest.tsx
 │  │  │
 │  │  ├─ components/
 │  │  │  ├─ common/
-│  │  │  │  ├─ Button.jsx
-│  │  │  │  ├─ Modal.jsx
-│  │  │  │  ├─ Table.jsx
-│  │  │  │  └─ Navbar.jsx
+│  │  │  │  ├─ Button.tsx
+│  │  │  │  ├─ Modal.tsx
+│  │  │  │  ├─ Table.tsx
+│  │  │  │  └─ Navbar.tsx
 │  │  │  └─ charts/
-│  │  │     ├─ AttendanceChart.jsx
-│  │  │     └─ SummaryCard.jsx
+│  │  │     ├─ AttendanceChart.tsx
+│  │  │     └─ SummaryCard.tsx
 │  │  │
 │  │  ├─ services/
 │  │  │  ├─ api.js
