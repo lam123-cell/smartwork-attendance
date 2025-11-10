@@ -1,0 +1,105 @@
+import { Link, useLocation } from "react-router-dom";
+import { Clock, Home, History, FileText, User, LogOut } from "lucide-react";
+
+interface LayoutProps {
+  children: React.ReactNode;
+  title?: string;
+  showUser?: boolean;
+  currentTime?: string;
+}
+
+const menuItems = [
+  { path: "/employee-dashboard", label: "Trang chủ", icon: Home },
+  { path: "/checkin", label: "Chấm công", icon: Clock },
+  { path: "/history", label: "Lịch sử chấm công", icon: History },
+  { path: "/personal-report", label: "Báo cáo cá nhân", icon: FileText },
+  { path: "/employee-profile", label: "Hồ sơ cá nhân", icon: User },
+];
+
+export default function EmployeeLayout({ children, title, showUser = true, currentTime }: LayoutProps) {
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <div className="flex h-screen bg-[#F9FAFB]">
+      {/* Sidebar */}
+      <div className="w-60 bg-[#F9FAFB] border-r border-[#E5E7EB] flex flex-col">
+        {/* Logo */}
+        <div className="h-[105px] px-6 py-6 border-b border-[#E5E7EB] flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#2563EB] rounded-lg flex items-center justify-center">
+            <Clock className="w-[14px] h-[14px] text-white" />
+          </div>
+          <div className="text-[#2563EB] font-bold text-[18px] leading-7">
+            Smart<br />Attendance
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-4">
+          <div className="flex flex-col gap-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive(item.path)
+                      ? "bg-[#EFF6FF] text-[#2563EB] border-l-4 border-[#2563EB] font-medium"
+                      : "bg-transparent text-[#374151] hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-base">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Logout */}
+        <div className="p-4 border-t border-[#E5E7EB]">
+          <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#FEF2F2] text-[#DC2626] w-full hover:bg-red-100 transition-colors">
+            <LogOut className="w-4 h-4" />
+            <span className="text-base">Đăng xuất</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-8">
+          <h1 className="text-2xl font-bold text-[#111827]">
+            {title || "Lịch sử chấm công"}
+          </h1>
+          <div className="flex items-center gap-3">
+            {currentTime && (
+              <div className="text-[18px] font-semibold text-[#2563EB] tracking-tight">
+                {currentTime}
+              </div>
+            )}
+            {showUser && (
+              <>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/72afa06532193de275849f30fedd2b876103a8bd?width=80"
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full"
+                />
+                <span className="text-base font-medium text-[#374151]">
+                  Nguyễn Nhật Lâm
+                </span>
+              </>
+            )}
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
