@@ -111,7 +111,7 @@ SmartWork-Attendance-System/
 │  │  │  ├─ admin/
 │  │  │  │  ├─ Dashboard.tsx
 │  │  │  │  ├─ Employees.tsx
-│  │  │  │  ├─ Reports.jsx
+│  │  │  │  ├─ Reports.tsx
 │  │  │  │  └─ AttendanceManager.tsx
 │  │  │  │
 │  │  │  └─ employee/
