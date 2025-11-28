@@ -18,7 +18,7 @@ export default function CheckIn() {
   }, []);
 
   return (
-    <EmployeeLayout title="Chấm công" currentTime={currentTime}>
+    <EmployeeLayout title="Chấm công" subtitle="Trang chấm công cho nhân viên." currentTime={currentTime}>
       <div className="flex items-center justify-center min-h-full p-6">
         <div className="w-full max-w-4xl space-y-8">
           {/* Clock Display */}

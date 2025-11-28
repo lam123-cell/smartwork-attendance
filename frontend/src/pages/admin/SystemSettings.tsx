@@ -20,7 +20,10 @@ export default function SystemSettings() {
   });
 
   return (
-    <AdminLayout title="Cài đặt hệ thống">
+    <AdminLayout
+      title="Cài đặt hệ thống"
+      subtitle="Cấu hình chung cho hệ thống chấm công."
+    >
       <div className="space-y-8">
         {/* Thông tin công ty */}
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-4">

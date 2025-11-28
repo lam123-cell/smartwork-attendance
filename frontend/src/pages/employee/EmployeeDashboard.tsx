@@ -3,7 +3,7 @@ import { Clock, MapPin, Timer, Calendar } from "lucide-react";
 
 export default function EmployeeDashboard() {
   return (
-    <EmployeeLayout title="Xin chào, Nguyễn Nhật Lâm 👋">
+    <EmployeeLayout title="Bảng điều khiển cá nhân" subtitle="Tổng quan cá nhân.">
       <div className="p-8 space-y-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,11 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Clock, Home, History, FileText, User, LogOut } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { http } from '@/services/http';
+import { toast } from '@/components/ui/use-toast';
 
 interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   showUser?: boolean;
   currentTime?: string;
+  subtitle?: string;
 }
 
 const menuItems = [
@@ -16,10 +20,37 @@ const menuItems = [
   { path: "/employee-profile", label: "Hồ sơ cá nhân", icon: User },
 ];
 
-export default function EmployeeLayout({ children, title, showUser = true, currentTime }: LayoutProps) {
+export default function EmployeeLayout({ children, title, showUser = true, currentTime, subtitle }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('auth') ?? sessionStorage.getItem('auth');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setUser(parsed.user || null);
+      }
+    } catch (e) {
+      setUser(null);
+    }
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
+
+
+  const handleLogout = async () => {
+    try {
+      await http.post('/auth/logout');
+    } catch (e) {
+      // ignore error
+    }
+    localStorage.removeItem('auth');
+    sessionStorage.removeItem('auth');
+    toast({ title: 'Đã đăng xuất thành công' });
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="flex h-screen bg-[#F9FAFB]">
@@ -60,7 +91,10 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
 
         {/* Logout */}
         <div className="p-4 border-t border-[#E5E7EB]">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#FEF2F2] text-[#DC2626] w-full hover:bg-red-100 transition-colors">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#FEF2F2] text-[#DC2626] w-full hover:bg-red-100 transition-colors font-medium"
+          >
             <LogOut className="w-4 h-4" />
             <span className="text-base">Đăng xuất</span>
           </button>
@@ -71,9 +105,10 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="h-16 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-8">
-          <h1 className="text-2xl font-bold text-[#111827]">
-            {title || "Lịch sử chấm công"}
-          </h1>
+          <div>
+            <h1 className="text-2xl font-bold text-[#111827]">{title || "Lịch sử chấm công"}</h1>
+            {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+          </div>
           <div className="flex items-center gap-3">
             {currentTime && (
               <div className="text-[18px] font-semibold text-[#2563EB] tracking-tight">
@@ -83,12 +118,12 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
             {showUser && (
               <>
                 <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/72afa06532193de275849f30fedd2b876103a8bd?width=80"
-                  alt="Profile"
+                  src={user?.avatar_url}
+                  alt={user?.full_name || 'Profile'}
                   className="w-10 h-10 rounded-full"
                 />
                 <span className="text-base font-medium text-[#374151]">
-                  Nguyễn Nhật Lâm
+                  {user?.full_name || 'Người dùng'}
                 </span>
               </>
             )}

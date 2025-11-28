@@ -3,7 +3,7 @@ import { CalendarDays, Clock, X, Search, FileDown } from "lucide-react";
 
 export default function AttendanceHistory() {
   return (
-    <EmployeeLayout title="Lịch sử chấm công">
+    <EmployeeLayout title="Lịch sử chấm công" subtitle="Xem lịch sử chấm công.">
       <div className="p-6 space-y-6">
         {/* Bộ lọc tìm kiếm */}
         <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 flex flex-wrap items-center justify-between gap-4">

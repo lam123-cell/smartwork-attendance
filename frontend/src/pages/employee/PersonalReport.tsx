@@ -3,7 +3,10 @@ import { Download, Printer, Clock, AlertTriangle, X } from "lucide-react";
 
 export default function Report() {
   return (
-    <EmployeeLayout title="Báo cáo cá nhân">
+    <EmployeeLayout
+      title="Báo cáo cá nhân"
+      subtitle="Báo cáo chi tiết cá nhân."
+    >
       <div className="p-6 space-y-6">
         {/* Filters and Actions */}
         <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 flex flex-wrap items-center justify-between gap-4">

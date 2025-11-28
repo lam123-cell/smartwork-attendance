@@ -13,7 +13,10 @@ export default function Profile() {
   });
 
   return (
-    <AdminLayout title="Hồ sơ cá nhân">
+    <AdminLayout
+      title="Hồ sơ cá nhân"
+      subtitle="Trang hồ sơ cá nhân cho quản lý thông tin của tài khoản quản trị."
+    >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Profile Info Card */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">

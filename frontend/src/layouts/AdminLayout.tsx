@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -11,6 +11,8 @@ import {
   LogOut,
   Clock,
 } from "lucide-react";
+import { http } from '@/services/http';
+import { toast } from '@/components/ui/use-toast';
 
 const menuItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,11 +25,36 @@ const menuItems = [
 
 interface AdminLayoutProps {
   title: string;
+  subtitle?: string;
   children: ReactNode;
 }
 
-export default function AdminLayout({ title, children }: AdminLayoutProps) {
+export default function AdminLayout({ title, subtitle, children }: AdminLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('auth') ?? sessionStorage.getItem('auth');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setUser(parsed.user || null);
+      }
+    } catch (e) {
+      setUser(null);
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await http.post('/auth/logout');
+    } catch (e) {}
+    localStorage.removeItem('auth');
+    sessionStorage.removeItem('auth');
+    toast({ title: 'Đã đăng xuất thành công', variant: 'success' });
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,7 +103,10 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
 
         {/* Logout */}
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-colors">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-colors"
+          >
             <LogOut className="w-4 h-4 shrink-0" />
             <span>Đăng xuất</span>
           </button>
@@ -87,21 +117,24 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
       <div className="ml-60">
         {/* Header */}
         <header className="h-[93px] bg-white border-b border-gray-200 flex items-center justify-between px-8">
-          <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
+            {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+          </div>
+
+          <div className="flex-1 px-6">
+            {/* placeholder to keep header spacing */}
+          </div>
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <img
-                src="https://api.builder.io/api/v1/image/assets/TEMP/72afa06532193de275849f30fedd2b876103a8bd?width=80"
-                alt="Admin"
+                src={user?.avatar_url || 'https://api.builder.io/api/v1/image/assets/TEMP/72afa06532193de275849f30fedd2b876103a8bd?width=80'}
+                alt={user?.full_name || 'User'}
                 className="w-10 h-10 rounded-full"
               />
-              <span className="text-gray-700 font-medium">Admin Nguyễn Nhật Lâm</span>
+              <span className="text-gray-700 font-medium">{user?.full_name || 'Người dùng'}</span>
             </div>
-            
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <Settings className="w-5 h-5 text-gray-600" />
-            </button>
           </div>
         </header>
         

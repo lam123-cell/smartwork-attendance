@@ -42,7 +42,10 @@ const recentActivity = [
 
 export default function Dashboard() {
   return (
-    <AdminLayout title="Tổng quan hệ thống">
+    <AdminLayout
+      title="Tổng quan hệ thống"
+      subtitle="Trang tổng quan hệ thống."
+    >
       <div className="space-y-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

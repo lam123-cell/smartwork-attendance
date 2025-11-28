@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, Mail, Lock, LogIn, Building2 } from "lucide-react";
+import { http } from '@/services/http';
+import { toast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,10 +15,41 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication
-    navigate("/dashboard");
+    try {
+      const res = await http.post('/auth/login', { email, password });
+      const data = res.data as any;
+
+      // save token and user
+      if (data?.accessToken && data?.user) {
+        const auth = { token: data.accessToken, user: data.user };
+        // respect "Remember me" checkbox: persist to localStorage if checked, otherwise sessionStorage
+        if (rememberMe) {
+          localStorage.setItem('auth', JSON.stringify(auth));
+        } else {
+          sessionStorage.setItem('auth', JSON.stringify(auth));
+        }
+        // set default header for subsequent requests
+        (http.defaults as any).headers = (http.defaults as any).headers || {};
+        (http.defaults as any).headers.common = (http.defaults as any).headers.common || {};
+        (http.defaults as any).headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+
+        // redirect based on role
+        if (data.user.role === 'admin') {
+          navigate('/dashboard');
+        } else {
+          navigate('/employee-dashboard');
+        }
+      } else {
+        // fallback
+        navigate('/dashboard');
+      }
+      toast({ title: data?.message || 'Đăng nhập thành công', variant: 'success' });
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? err?.message ?? 'Đăng nhập thất bại';
+      toast({ title: 'Lỗi đăng nhập', description: message, variant: 'destructive' });
+    }
   };
 
   return (
@@ -137,6 +171,15 @@ export default function Login() {
                 Đăng nhập
               </Button>
             </form>
+
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Chưa có tài khoản?{' '}
+                <Link to="/register" className="text-blue-600 font-medium hover:underline">
+                  Đăng ký
+                </Link>
+              </p>
+            </div>
           </div>
 
           {/* Footer */}

@@ -36,7 +36,10 @@ export default function ShiftManagement() {
   ]);
 
   return (
-    <AdminLayout title="Quản lý ca làm">
+    <AdminLayout
+      title="Quản lý ca làm"
+      subtitle="Thiết lập và quản lý ca làm việc cho nhân viên."
+    >
       <div className="space-y-8">
         {/* Search and sort */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">

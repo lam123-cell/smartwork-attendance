@@ -90,7 +90,10 @@ export default function EmployeeManagement() {
   const endIndex = Math.min(startIndex + itemsPerPage, totalEmployees);
 
   return (
-    <AdminLayout title="Quản lý nhân viên">
+    <AdminLayout
+      title="Quản lý nhân viên"
+      subtitle="Trang quản lý danh sách nhân viên của công ty."
+    >
       <div className="space-y-6">
         {/* Search and Add Button */}
         <div className="flex items-center justify-between gap-4">

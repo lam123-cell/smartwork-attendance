@@ -45,7 +45,10 @@ const detailedReports = [
 
 export default function Reports() {
   return (
-    <AdminLayout title="Báo cáo thống kê">
+    <AdminLayout
+      title="Báo cáo thống kê"
+      subtitle="Trang báo cáo cung cấp số liệu tổng hợp theo tháng và theo phòng ban."
+    >
       <div className="space-y-8">
         {/* Filters */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
