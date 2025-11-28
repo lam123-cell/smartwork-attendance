@@ -18,7 +18,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await http.post('/auth/login', { email, password });
+      const res = await http.post('/auth/login', { email, password, remember: rememberMe });
       const data = res.data as any;
 
       // save token and user

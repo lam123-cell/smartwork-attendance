@@ -17,6 +17,7 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
   password: z.string().min(1, 'Mật khẩu bắt buộc'),
+  remember: z.boolean().optional().default(false),
 });
 
 export const register = async (req: Request, res: Response) => {
@@ -63,6 +64,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   const { email, password } = parseResult.data;
+  const { remember } = parseResult.data;
   const user = await findUserByEmail(email);
   // Kiểm tra xem người dùng có tồn tại không
   if (!user) return res.status(401).json({ message: 'Sai email hoặc mật khẩu' });
@@ -76,7 +78,29 @@ export const login = async (req: Request, res: Response) => {
   // Tạo access token và refresh token
   const accessToken = signAccessToken({ sub: user.id, role: user.role, email: user.email });
   const refreshToken = signRefreshToken({ sub: user.id });
-  res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' });
+
+  // If remember is true, set persistent cookie according to JWT_REFRESH_EXPIRATION
+  try {
+    if (remember) {
+      const raw = process.env.JWT_REFRESH_EXPIRATION || '7d';
+      // simple parser for formats like '7d', '24h', '15m', '30s'
+      const num = parseInt(raw.replace(/[^0-9]/g, ''), 10) || 7;
+      const unit = raw.replace(/[^a-zA-Z]/g, '') || 'd';
+      let maxAge = 7 * 24 * 60 * 60 * 1000; // default 7 days
+      if (unit === 'd') maxAge = num * 24 * 60 * 60 * 1000;
+      else if (unit === 'h') maxAge = num * 60 * 60 * 1000;
+      else if (unit === 'm') maxAge = num * 60 * 1000;
+      else if (unit === 's') maxAge = num * 1000;
+
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict', maxAge });
+    } else {
+      // session cookie (cleared when browser closed)
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' });
+    }
+  } catch (e) {
+    // fallback to session cookie
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' });
+  }
 
   // Loại bỏ mật khẩu trước khi gửi về client
   const safeUser = { ...user } as any;

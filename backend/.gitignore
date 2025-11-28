@@ -40,3 +40,8 @@ temp/
 # TypeScript declarations (generated)
 *.d.ts
 
+package-lock.json
+yarn.lock
+
+README.md
+
