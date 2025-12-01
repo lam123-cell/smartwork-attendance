@@ -5,6 +5,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { config } from './config';
 import authRoutes from './routes/auth';
+import attendanceRoutes from './routes/attendance';
+import cron from 'node-cron';
+import { runAutoCheckout } from './jobs/autoCheckout';
 
 const app: Application = express();
 
@@ -28,6 +31,17 @@ app.get('/health', (_req: Request, res: Response) => {
 // Định tuyến API
 const apiPrefix = config.apiPrefix;
 app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/attendance`, attendanceRoutes);
+
+cron.schedule('0 10 * * *', async () => {
+  console.log('Bắt đầu chạy Auto Checkout lúc 17:00:00...');
+  try {
+    await runAutoCheckout();
+    console.log('Auto Checkout hoàn tất thành công.');
+  } catch (error) {
+    console.error('Lỗi khi chạy Auto Checkout:', error);
+  }
+});
 
 // Bộ xử lý lỗi toàn cục
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

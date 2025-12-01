@@ -1,7 +1,68 @@
 import EmployeeLayout from "@/layouts/EmployeeLayout";
 import { Clock, MapPin, Timer, Calendar } from "lucide-react";
+import { useEffect, useMemo, useState } from 'react';
+import { http } from '@/services/http';
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
+import { format, subDays } from 'date-fns';
 
 export default function EmployeeDashboard() {
+  const [today, setToday] = useState<any | null>(null);
+  const [history, setHistory] = useState<any[]>([]);
+  const [stats, setStats] = useState<{ monthlyHours: number; lateDays: number; onTimeRate: string } | null>(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const res = await http.get<{ today: any | null; history: any[]; stats: any }>('/attendance/dashboard?historyLimit=7');
+        setToday(res.data.today ?? null);
+        setHistory(res.data.history ?? []);
+        setStats(res.data.stats ?? null);
+      } catch (err) {
+        // ignore for now
+      }
+    };
+    fetchDashboard();
+  }, []);
+
+  // Prepare 7-day labels and data (ensure days with no record show 0)
+  const chartData = useMemo(() => {
+    const days = Array.from({ length: 7 }).map((_, i) => {
+      const d = subDays(new Date(), 6 - i);
+      return format(d, 'yyyy-MM-dd');
+    });
+
+    const labels = days.map(d => format(new Date(d), 'EEE'));
+
+    const dataMap: Record<string, number> = {};
+    history.forEach(h => {
+      if (h.work_date) {
+        dataMap[h.work_date] = Number(h.total_hours || 0);
+      }
+    });
+
+    const data = days.map(d => dataMap[d] ?? 0);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Giờ làm',
+          data,
+          backgroundColor: '#93C5FD',
+          borderRadius: 6,
+        },
+      ],
+    };
+  }, [history]);
+
+  const recentActivities = history.slice(0, 5);
+
+  const checkInTime = today?.check_in ? new Date(today.check_in).toLocaleTimeString() : '--';
+  const checkOutTime = today?.check_out ? new Date(today.check_out).toLocaleTimeString() : '--';
+  const totalHoursToday = today?.total_hours ? `${today.total_hours}h` : '--';
+  const statusText = today ? (today.status === 'late' ? 'Đi muộn' : 'Đúng giờ') : 'Chưa check-in';
+
   return (
     <EmployeeLayout title="Bảng điều khiển cá nhân" subtitle="Tổng quan cá nhân.">
       <div className="p-8 space-y-8">
@@ -15,7 +76,7 @@ export default function EmployeeDashboard() {
               </div>
               <div>
                 <p className="text-sm text-[#4B5563]">Giờ Check-in hôm nay</p>
-                <p className="text-2xl font-bold text-[#2563EB]">08:14 AM</p>
+                <p className="text-2xl font-bold text-[#2563EB]">{checkInTime}</p>
               </div>
             </div>
           </div>
@@ -28,7 +89,7 @@ export default function EmployeeDashboard() {
               </div>
               <div>
                 <p className="text-sm text-[#4B5563]">Giờ Check-out</p>
-                <p className="text-2xl font-bold text-[#9CA3AF]">Chưa Check-out</p>
+                <p className="text-2xl font-bold text-[#9CA3AF]">{checkOutTime}</p>
               </div>
             </div>
           </div>
@@ -41,7 +102,7 @@ export default function EmployeeDashboard() {
               </div>
               <div>
                 <p className="text-sm text-[#4B5563]">Tổng giờ làm hôm nay</p>
-                <p className="text-2xl font-bold text-[#16A34A]">7.5h</p>
+                <p className="text-2xl font-bold text-[#16A34A]">{totalHoursToday}</p>
               </div>
             </div>
           </div>
@@ -54,7 +115,7 @@ export default function EmployeeDashboard() {
               </div>
               <div>
                 <p className="text-sm text-[#4B5563]">Trạng thái ca làm</p>
-                <p className="text-2xl font-bold text-[#16A34A]">Đúng giờ</p>
+                <p className="text-2xl font-bold text-[#16A34A]">{statusText}</p>
               </div>
             </div>
           </div>
@@ -64,30 +125,15 @@ export default function EmployeeDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Weekly Hours Chart */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-[#E5E7EB] p-6">
-            <h3 className="text-lg font-semibold text-[#111827] mb-6">
-              Tổng quan giờ làm trong tuần
-            </h3>
-            <div className="h-64 flex items-end justify-around gap-4 px-4">
-              {[
-                { day: "T2", hours: 7 },
-                { day: "T3", hours: 7.5 },
-                { day: "T4", hours: 7 },
-                { day: "T5", hours: 8 },
-                { day: "T6", hours: 7 },
-              ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center flex-1">
-                  <div className="w-full bg-[#93C5FD] rounded-t-lg border border-white transition-all hover:bg-[#2563EB]" style={{ height: `${(item.hours / 10) * 100}%` }} />
-                  <span className="mt-2 text-sm text-[#333333]">{item.day}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-4 text-xs text-[#666666]">
-              <span>0</span>
-              <span>2</span>
-              <span>4</span>
-              <span>6</span>
-              <span>8</span>
-              <span>10</span>
+            <h3 className="text-lg font-semibold text-[#111827] mb-6">Tổng quan giờ làm trong tuần</h3>
+            <div className="h-64">
+              <Bar data={chartData} options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: { beginAtZero: true }
+                }
+              }} />
             </div>
           </div>
 
@@ -101,12 +147,12 @@ export default function EmployeeDashboard() {
               </div>
               <h3 className="text-lg font-semibold text-[#111827]">Nhắc nhở hôm nay</h3>
             </div>
-            <p className="text-base text-[#4B5563] mb-4">
-              Bạn chưa check-out. Hãy bấm nút Check-out trước 18:00 để hoàn tất ngày làm việc.
-            </p>
-            <button className="w-full bg-[#2563EB] text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-              Đi đến trang Chấm công
-            </button>
+            <p className="text-base text-[#4B5563] mb-4">{today && today.check_in && !today.check_out ? 'Bạn chưa check-out. Hãy bấm nút Check-out trước 18:00 để hoàn tất ngày làm việc.' : 'Không có nhắc nhở'}</p>
+            {today && today.check_in && !today.check_out ? (
+              <a href="/checkin" className="w-full inline-block text-center bg-[#DC2626] text-white py-3 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors">Bạn chưa check-out!</a>
+            ) : (
+              <button className="w-full bg-[#2563EB] text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">Đi đến trang Chấm công</button>
+            )}
           </div>
         </div>
 
@@ -114,9 +160,7 @@ export default function EmployeeDashboard() {
         <div className="bg-white rounded-xl border border-[#E5E7EB] p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-[#111827]">Hoạt động gần đây</h3>
-            <button className="text-base font-medium text-[#2563EB] hover:underline">
-              Xem chi tiết lịch sử
-            </button>
+            <button className="text-base font-medium text-[#2563EB] hover:underline">Xem chi tiết lịch sử</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -129,20 +173,14 @@ export default function EmployeeDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { date: "Hôm nay (25/11)", checkIn: "08:14 AM", checkOut: "-", status: "Đúng giờ", statusColor: "bg-[#DCFCE7] text-[#15803D]" },
-                  { date: "24/11/2024", checkIn: "08:05 AM", checkOut: "17:30 PM", status: "Đúng giờ", statusColor: "bg-[#DCFCE7] text-[#15803D]" },
-                  { date: "23/11/2024", checkIn: "08:25 AM", checkOut: "17:45 PM", status: "Đi muộn", statusColor: "bg-[#FEE2E2] text-[#B91C1C]" },
-                  { date: "22/11/2024", checkIn: "08:10 AM", checkOut: "17:20 PM", status: "Đúng giờ", statusColor: "bg-[#DCFCE7] text-[#15803D]" },
-                  { date: "21/11/2024", checkIn: "-", checkOut: "-", status: "Vắng", statusColor: "bg-[#F3F4F6] text-[#4B5563]" },
-                ].map((row, idx) => (
+                {recentActivities.map((row, idx) => (
                   <tr key={idx} className="border-b border-[#F3F4F6] last:border-0">
-                    <td className="text-center py-4 text-base text-[#111827]">{row.date}</td>
-                    <td className="text-center py-4 text-base text-[#111827]">{row.checkIn}</td>
-                    <td className="text-center py-4 text-base text-[#9CA3AF]">{row.checkOut}</td>
+                    <td className="text-center py-4 text-base text-[#111827]">{row.work_date}</td>
+                    <td className="text-center py-4 text-base text-[#111827]">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '-'}</td>
+                    <td className="text-center py-4 text-base text-[#9CA3AF]">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '-'}</td>
                     <td className="text-center py-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${row.statusColor}`}>
-                        {row.status}
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${row.status === 'late' ? 'bg-[#FEE2E2] text-[#B91C1C]' : row.status === 'present' ? 'bg-[#DCFCE7] text-[#15803D]' : 'bg-[#F3F4F6] text-[#4B5563]'}`}>
+                        {row.status === 'late' ? 'Đi muộn' : row.status === 'present' ? 'Đúng giờ' : row.status}
                       </span>
                     </td>
                   </tr>
