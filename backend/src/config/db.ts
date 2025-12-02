@@ -12,7 +12,7 @@ const pool = new Pool({
   user: config.database.user,
   password: config.database.password,
   max: 10,// Số kết nối tối đa trong pool
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 30000,
   //Tương thích với Supabase pooler
   keepAlive: true,

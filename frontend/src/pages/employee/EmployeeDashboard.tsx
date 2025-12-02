@@ -19,13 +19,13 @@ export default function EmployeeDashboard() {
         setHistory(res.data.history ?? []);
         setStats(res.data.stats ?? null);
       } catch (err) {
-        // ignore for now
+        // bỏ qua lỗi
       }
     };
     fetchDashboard();
   }, []);
 
-  // Prepare 7-day labels and data (ensure days with no record show 0)
+  // Chuẩn bị nhãn và dữ liệu cho 7 ngày (đảm bảo ngày không có bản ghi hiển thị 0)
   const chartData = useMemo(() => {
     const days = Array.from({ length: 7 }).map((_, i) => {
       const d = subDays(new Date(), 6 - i);
@@ -147,21 +147,28 @@ export default function EmployeeDashboard() {
               </div>
               <h3 className="text-lg font-semibold text-[#111827]">Nhắc nhở hôm nay</h3>
             </div>
-            <p className="text-base text-[#4B5563] mb-4">{today && today.check_in && !today.check_out ? 'Bạn chưa check-out. Hãy bấm nút Check-out trước 18:00 để hoàn tất ngày làm việc.' : 'Không có nhắc nhở'}</p>
+            <p className="text-base text-[#4B5563] mb-4">
+              {(!today || !today.check_in)
+                ? 'Bạn chưa check-in. Hãy bấm nút Check-in để bắt đầu ca.'
+                : (today.check_in && !today.check_out)
+                  ? 'Bạn chưa check-out. Hãy bấm nút Check-out trước 17:00 để hoàn tất ngày làm việc.'
+                  : 'Không có nhắc nhở'
+              }
+            </p>
             {today && today.check_in && !today.check_out ? (
               <a href="/checkin" className="w-full inline-block text-center bg-[#DC2626] text-white py-3 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors">Bạn chưa check-out!</a>
             ) : (
-              <button className="w-full bg-[#2563EB] text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">Đi đến trang Chấm công</button>
+              <a href="/checkin" className="w-full inline-block text-center bg-[#2563EB] text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">Đi đến trang Chấm công</a>
             )}
           </div>
         </div>
 
         {/* Recent Activity Table */}
         <div className="bg-white rounded-xl border border-[#E5E7EB] p-6">
-          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-[#111827]">Hoạt động gần đây</h3>
-            <button className="text-base font-medium text-[#2563EB] hover:underline">Xem chi tiết lịch sử</button>
-          </div>
+            <a href="/history" className="text-base font-medium text-[#2563EB] hover:underline">Xem chi tiết lịch sử</a>
+            </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

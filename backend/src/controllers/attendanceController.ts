@@ -12,8 +12,8 @@ const isCheckInAllowed = () => {
   const now = new Date();
   const vnHour = (now.getUTCHours() + 7) % 24; // Giờ Việt Nam (UTC+7)
   const vnMinute = now.getUTCMinutes();
-  if (vnHour > 9) return false;
-  if (vnHour === 9 && vnMinute > 30) return false;
+  if (vnHour > 10) return false;
+  if (vnHour === 10 && vnMinute > 30) return false;
   return true;
 };
 
@@ -64,7 +64,9 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
       let lateMinutes = 0;
       let status = 'present';
       if (shift && shift.start_time) {
-        const checkInMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+        // Convert current UTC time to Vietnam time (UTC+7) before comparing
+        const vnHour = (now.getUTCHours() + 7) % 24;
+        const checkInMinutes = vnHour * 60 + now.getUTCMinutes();
         const shiftStart = parseTimeToMinutes(shift.start_time);
         lateMinutes = Math.max(0, checkInMinutes - shiftStart);
         if (lateMinutes > (shift.late_threshold_minutes ?? 15)) status = 'late';
@@ -99,7 +101,9 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
     let lateMinutes = 0;
     let status = 'present';
     if (shift && shift.start_time) {
-      const checkInMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      // Convert current UTC time to Vietnam time (UTC+7) before comparing
+      const vnHour = (now.getUTCHours() + 7) % 24;
+      const checkInMinutes = vnHour * 60 + now.getUTCMinutes();
       const shiftStart = parseTimeToMinutes(shift.start_time);
       lateMinutes = Math.max(0, checkInMinutes - shiftStart);
       if (lateMinutes > (shift.late_threshold_minutes ?? 15)) status = 'late';
@@ -219,45 +223,7 @@ export const getToday = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-// Tính toán thống kê
-const computeStatsForUser = async (userId: string) => {
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  monthStart.setHours(0,0,0,0);
-
-  const rows = await query(`
-    SELECT status, late_minutes, total_hours, check_in
-    FROM attendance
-    WHERE user_id = $1 AND work_date >= $2
-  `, [userId, monthStart.toISOString().slice(0,10)]);
-
-  const lateDays = rows.rows.filter((r:any) => r.status === 'late').length;
-  const totalHours = rows.rows.reduce((sum: number, r: any) => sum + (r.total_hours || 0), 0);
-  const workedDays = rows.rows.filter((r: any) => r.check_in).length;
-  const onTimeRate = workedDays > 0 ? Math.round(((workedDays - lateDays) / workedDays) * 100) : 0;
-
-  return {
-    monthlyHours: Number(totalHours.toFixed(1)),
-    lateDays,
-    onTimeRate: onTimeRate + '%'
-  };
-};
-
-export const getDashboard = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = (req as any).user.id as string;
-    const historyLimit = parseInt(String(req.query.historyLimit ?? '7'), 10);
-
-    const today = await findTodayByUser(userId, utcDateString());
-    const history = await getHistory(userId, historyLimit, 0);
-    const stats = await computeStatsForUser(userId);
-
-    return res.json({ today: today ? { ...today } : null, history, stats });
-  } catch (err) {
-    next(err);
-  }
-};
-
+// Lấy lịch sử chấm công với phân trang
 export const history = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id as string;
@@ -270,6 +236,7 @@ export const history = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+// Lấy thống kê chấm công trong tháng hiện tại
 export const getStats = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
   const monthStart = new Date();
@@ -294,109 +261,221 @@ export const getStats = async (req: Request, res: Response) => {
   });
 };
 
+// Tìm kiếm lịch sử chấm công với bộ lọc
 export const searchHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id as string;
     const { from_date, to_date, status } = req.query;
     const limit = parseInt(String(req.query.limit ?? '30'), 10);
     const offset = parseInt(String(req.query.offset ?? '0'), 10);
-
-    let sql = `SELECT * FROM attendance WHERE user_id = $1`;
-    const values: any[] = [userId];
+    // Build base filter SQL and parameters (without limit/offset)
+    let baseSql = `FROM attendance WHERE user_id = $1`;
+    const params: any[] = [userId];
     let idx = 2;
 
     if (from_date) {
-      sql += ` AND work_date >= $${idx}`;
-      values.push(String(from_date));
+      baseSql += ` AND work_date >= $${idx}`;
+      params.push(String(from_date));
       idx++;
     }
     if (to_date) {
-      sql += ` AND work_date <= $${idx}`;
-      values.push(String(to_date));
+      baseSql += ` AND work_date <= $${idx}`;
+      params.push(String(to_date));
       idx++;
     }
     if (status && String(status) !== 'all') {
-      sql += ` AND status = $${idx}`;
-      values.push(String(status));
+      baseSql += ` AND status = $${idx}`;
+      params.push(String(status));
       idx++;
     }
 
-    sql += ` ORDER BY work_date DESC LIMIT $${idx} OFFSET $${idx + 1}`;
-    values.push(limit, offset);
+    // Count total matching rows for pagination
+    const countSql = `SELECT COUNT(*) AS cnt ${baseSql}`;
+    const countRes = await query(countSql, params);
+    const total = Number(countRes.rows[0]?.cnt ?? 0);
 
-    const rows = await query(sql, values);
-    return res.json({ items: rows.rows });
+    // Fetch page rows with limit/offset
+    const dataSql = `SELECT * ${baseSql} ORDER BY work_date DESC LIMIT $${idx} OFFSET $${idx + 1}`;
+    const dataParams = params.concat([limit, offset]);
+    const dataRes = await query(dataSql, dataParams);
+
+    return res.json({ items: dataRes.rows, total });
   } catch (err) {
     next(err);
   }
 };
 
+
+// Xuất lịch sử chấm công ra file Excel
 export const exportHistoryExcel = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id as string;
-    const { from_date, to_date } = req.query;
+    const { from_date, to_date, status } = req.query;
 
+    // Truy vấn dữ liệu
     let sql = `SELECT work_date, shift_id, check_in, check_out, total_hours, status, late_minutes, note 
                FROM attendance WHERE user_id = $1`;
     const values: any[] = [userId];
     let idx = 2;
 
     if (from_date) {
-      sql += ` AND work_date >= $${idx}`;
-      values.push(String(from_date));
-      idx++;
+      sql += ` AND work_date >= $${idx++}`;
+      values.push(from_date);
     }
     if (to_date) {
-      sql += ` AND work_date <= $${idx}`;
-      values.push(String(to_date));
-      idx++;
+      sql += ` AND work_date <= $${idx++}`;
+      values.push(to_date);
     }
-
+    if (status && String(status) !== 'all') {
+      sql += ` AND status = $${idx++}`;
+      values.push(String(status));
+    }
     sql += ` ORDER BY work_date DESC`;
 
     const result = await query(sql, values);
     const rows = result.rows;
 
+    // Tạo file Excel
     const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('Lịch sử chấm công');
+    const sheet = workbook.addWorksheet('Lịch sử chấm công', {
+      pageSetup: { paperSize: 9, orientation: 'landscape' },
+    });
 
-    sheet.addRow(['LỊCH SỬ CHẤM CÔNG CÁ NHÂN']);
+    // Tiêu đề lớn
     sheet.mergeCells('A1:H1');
-    sheet.getCell('A1').font = { bold: true, size: 16 };
-    sheet.getCell('A1').alignment = { horizontal: 'center' };
+    const titleCell = sheet.getCell('A1');
+    titleCell.value = 'LỊCH SỬ CHẤM CÔNG CÁ NHÂN';
+    titleCell.font = { bold: true, size: 16, color: { argb: 'FF1E40DF' } };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    sheet.getRow(1).height = 40;
 
-    sheet.addRow(['Từ ngày: ', from_date || 'Không giới hạn']);
-    sheet.addRow(['Đến ngày: ', to_date || 'Không giới hạn']);
+    // Từ ngày - Đến ngày
+    sheet.mergeCells('A2:B2');
+    sheet.getCell('A2').value = 'Từ ngày:';
+    sheet.getCell('B2').value = from_date ? formatDate(from_date as string) : 'Không giới hạn';
+
+    sheet.mergeCells('A3:B3');
+    sheet.getCell('A3').value = 'Đến ngày:';
+    sheet.getCell('B3').value = to_date ? formatDate(to_date as string) : 'Không giới hạn';
+
+    // Dòng trống
     sheet.addRow([]);
 
-    const header = sheet.addRow(['Ngày', 'Ca làm', 'Check-in', 'Check-out', 'Giờ làm', 'Trạng thái', 'Muộn (phút)', 'Ghi chú']);
-    header.font = { bold: true };
-    header.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD3D3D3' } } as any;
+    // Header bảng
+    const headerRow = sheet.addRow([
+      'Ngày',
+      'Ca làm',
+      'Check-in',
+      'Check-out',
+      'Giờ làm',
+      'Trạng thái',
+      'Muộn (phút)',
+      'Ghi chú',
+    ]);
 
+    // Style header
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2563EB' }, // xanh dương đậm đẹp
+    };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    headerRow.height = 30;
+
+    // Thêm viền cho header
+    headerRow.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+    // Dữ liệu
     rows.forEach((row: any) => {
-      let shiftName = 'Ca hành chính';
+      const shiftName = row.shift_id === '11111111-1111-1111-1111-111111111111'
+        ? 'Sáng (08:00–12:00)'
+        : row.shift_id === '22222222-2222-2222-2222-222222222222'
+          ? 'Chiều (13:00–17:00)'
+          : 'Ca hành chính';
+
+      const statusText = row.status === 'late' ? 'Đi muộn' : row.status === 'present' ? 'Đúng giờ' : 'Vắng';
 
       sheet.addRow([
-        row.work_date,
+        formatDate(row.work_date), // Ngày dạng dd/mm/yyyy
         shiftName,
-        row.check_in ? new Date(row.check_in).toLocaleTimeString('vi-VN') : '--',
-        row.check_out ? new Date(row.check_out).toLocaleTimeString('vi-VN') : '--',
-        row.total_hours || '--',
-        row.status === 'late' ? 'Đi muộn' : (row.status === 'present' ? 'Có mặt' : row.status),
-        row.late_minutes || 0,
-        row.note || ''
+        row.check_in ? new Date(row.check_in).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
+        row.check_out ? new Date(row.check_out).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
+        row.total_hours ? Number(row.total_hours).toFixed(1) : '--',
+        statusText,
+        row.late_minutes > 0 ? row.late_minutes : '',
+        row.note || '',
       ]);
     });
 
-    sheet.columns.forEach((col: any) => (col.width = 15));
+    // Style toàn bộ bảng dữ liệu
+    const dataStartRow = 6; // vì header ở row 5
+    const lastRow = sheet.rowCount;
 
+    for (let i = dataStartRow; i <= lastRow; i++) {
+      const r = sheet.getRow(i);
+      r.height = 25;
+      r.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      r.eachCell((cell, colNumber) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+
+        // Tô màu trạng thái
+        if (colNumber === 6) {
+          const val = cell.value;
+          if (val === 'Đi muộn') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE6A5' } };
+            cell.font = { color: { argb: 'FFCA8A04' }, bold: true };
+          } else if (val === 'Vắng') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFECACA' } };
+            cell.font = { color: { argb: 'FFDC2626' }, bold: true };
+          } else if (val === 'Đúng giờ') {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+            cell.font = { color: { argb: 'FF16A34A' } };
+          }
+        }
+      });
+    }
+
+    // Đặt độ rộng cột đẹp
+    sheet.columns = [
+      { width: 14 },
+      { width: 20 },
+      { width: 14 },
+      { width: 14 },
+      { width: 12 },
+      { width: 15 },
+      { width: 14 },
+      { width: 25 },
+    ];
+
+    // Gửi file
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=lich-su-cham-cong.xlsx');
+    res.setHeader('Content-Disposition', `attachment; filename="lich-su-cham-cong-${from_date || 'all'}-den-${to_date || 'all'}.xlsx"`);
+
     await workbook.xlsx.write(res);
     res.end();
   } catch (err) {
     next(err);
   }
 };
+
+// Helper format ngày đẹp
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('vi-VN'); // 01/12/2025
+}
 
 

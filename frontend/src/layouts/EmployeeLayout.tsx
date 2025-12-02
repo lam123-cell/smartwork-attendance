@@ -48,7 +48,7 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
     }
     localStorage.removeItem('auth');
     sessionStorage.removeItem('auth');
-    toast({ title: 'Đã đăng xuất thành công' });
+    toast({ title: 'Đã đăng xuất thành công', variant: 'success' });
     navigate('/login', { replace: true });
   };
 
@@ -90,13 +90,13 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-[#E5E7EB]">
+        <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#FEF2F2] text-[#DC2626] w-full hover:bg-red-100 transition-colors font-medium"
+            className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-colors"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="text-base">Đăng xuất</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span>Đăng xuất</span>
           </button>
         </div>
       </div>

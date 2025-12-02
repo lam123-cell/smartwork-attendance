@@ -62,7 +62,7 @@ export default function CheckIn() {
     await fetchToday();
     } catch (err: any) {
       const msg = err?.message ?? (err?.message || JSON.stringify(err));
-      toast({ title: 'Lỗi', description: msg, duration: 6000 });
+      toast({ title: 'Lỗi', description: msg, duration: 6000 , variant: 'destructive' });
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/auth';
-import { checkIn, checkOut, getStats, getToday, history, getDashboard, searchHistory, exportHistoryExcel } from '../controllers/attendanceController';
+import { checkIn, checkOut, getStats, getToday, history, searchHistory, exportHistoryExcel } from '../controllers/attendanceController';
+import { getDashboard } from '../controllers/attendanceDashboardController';
 
 const router = Router();
 
