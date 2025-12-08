@@ -5,7 +5,6 @@ import DashboardAdmin from "@/pages/admin/DashboardAdmin";
 import AdminProfile from "@/pages/admin/AdminProfile";
 import ReportManagement from "@/pages/admin/ReportManagement";
 import EmployeeManagement from "@/pages/admin/EmployeeManagement";
-import ShiftManagement from "@/pages/admin/ShiftManagement";
 import SystemSettings from "@/pages/admin/SystemSettings";
 import EmployeeDashboard from "@/pages/employee/EmployeeDashboard";
 import CheckIN from "@/pages/employee/CheckIn";
@@ -14,6 +13,7 @@ import PersonalReport from "@/pages/employee/PersonalReport";
 import EmployeeProfile from "@/pages/employee/EmployeeProfile";
 import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from '@/components/ProtectedRoute';
+import AttendanceManagement from "@/pages/admin/AttendanceManagement";
 
 function App() {
   return (
@@ -57,10 +57,10 @@ function App() {
           }
         />
         <Route
-          path="/shifts"
+          path="/attendance"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
-              <ShiftManagement />
+              <AttendanceManagement />
             </ProtectedRoute>
           }
         />

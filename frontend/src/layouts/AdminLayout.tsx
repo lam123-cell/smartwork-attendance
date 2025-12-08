@@ -17,7 +17,7 @@ import { toast } from '@/components/ui/use-toast';
 const menuItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/employees", label: "Quản lý nhân viên", icon: Users },
-  { path: "/shifts", label: "Quản lý ca làm", icon: Calendar },
+  { path: "/attendance", label: "Quản lý chấm công", icon: Calendar },
   { path: "/reports", label: "Báo cáo", icon: FileText },
   { path: "/settings", label: "Cài đặt hệ thống", icon: Settings },
   { path: "/profile", label: "Hồ sơ cá nhân", icon: User },
@@ -129,9 +129,9 @@ export default function AdminLayout({ title, subtitle, children }: AdminLayoutPr
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <img
-                src={user?.avatar_url || 'https://api.builder.io/api/v1/image/assets/TEMP/72afa06532193de275849f30fedd2b876103a8bd?width=80'}
+                src={user?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || 'User')}&background=2563EB&color=fff`}
                 alt={user?.full_name || 'User'}
-                className="w-10 h-10 rounded-full"
+                className="w-10 h-10 rounded-full object-cover"
               />
               <span className="text-gray-700 font-medium">{user?.full_name || 'Người dùng'}</span>
             </div>

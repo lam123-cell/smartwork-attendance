@@ -118,9 +118,9 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
             {showUser && (
               <>
                 <img
-                  src={user?.avatar_url}
+                  src={user?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || 'User')}&background=2563EB&color=fff`}
                   alt={user?.full_name || 'Profile'}
-                  className="w-10 h-10 rounded-full"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <span className="text-base font-medium text-[#374151]">
                   {user?.full_name || 'Người dùng'}

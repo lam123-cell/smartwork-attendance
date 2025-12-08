@@ -6,9 +6,11 @@ import cookieParser from 'cookie-parser';
 import { config } from './config';
 import authRoutes from './routes/auth';
 import attendanceRoutes from './routes/attendance';
+import attendanceAdminRoutes from './routes/attendanceAdmin';
 import reportsRoutes from './routes/reports';
 import profileRoutes from './routes/profile';
 import departmentsRoutes from './routes/departments';
+import employeesRoutes from './routes/employees';
 import cron from 'node-cron';
 import { runAutoCheckout } from './jobs/autoCheckout';
 
@@ -34,10 +36,12 @@ app.get('/health', (_req: Request, res: Response) => {
 // Định tuyến API
 const apiPrefix = config.apiPrefix;
 app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/attendance/admin`, attendanceAdminRoutes);
 app.use(`${apiPrefix}/attendance`, attendanceRoutes);
 app.use(`${apiPrefix}/reports`, reportsRoutes);
 app.use(`${apiPrefix}/profile`, profileRoutes);
 app.use(`${apiPrefix}/departments`, departmentsRoutes);
+app.use(`${apiPrefix}/employees`, employeesRoutes);
 
 // Auto checkout đúng 17:00:00 giờ Việt Nam – dù server ở đâu cũng đúng!
 cron.schedule('0 17 * * *', async () => {
