@@ -15,7 +15,8 @@ const computeStatsForUser = async (userId: string) => {
   `, [userId, monthStart.toISOString().slice(0,10)]);
 
   const lateDays = rows.rows.filter((r:any) => r.status === 'late').length;
-  const totalHours = rows.rows.reduce((sum: number, r: any) => sum + (r.total_hours || 0), 0);
+  // Ensure total_hours from DB (may be string) is converted to Number before summing
+  const totalHours = rows.rows.reduce((sum: number, r: any) => sum + Number(r.total_hours ?? 0), 0);
   const workedDays = rows.rows.filter((r: any) => r.check_in).length;
   const onTimeRate = workedDays > 0 ? Math.round(((workedDays - lateDays) / workedDays) * 100) : 0;
 

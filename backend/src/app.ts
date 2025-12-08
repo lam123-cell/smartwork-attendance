@@ -6,6 +6,9 @@ import cookieParser from 'cookie-parser';
 import { config } from './config';
 import authRoutes from './routes/auth';
 import attendanceRoutes from './routes/attendance';
+import reportsRoutes from './routes/reports';
+import profileRoutes from './routes/profile';
+import departmentsRoutes from './routes/departments';
 import cron from 'node-cron';
 import { runAutoCheckout } from './jobs/autoCheckout';
 
@@ -32,16 +35,25 @@ app.get('/health', (_req: Request, res: Response) => {
 const apiPrefix = config.apiPrefix;
 app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/attendance`, attendanceRoutes);
+app.use(`${apiPrefix}/reports`, reportsRoutes);
+app.use(`${apiPrefix}/profile`, profileRoutes);
+app.use(`${apiPrefix}/departments`, departmentsRoutes);
 
-cron.schedule('0 10 * * *', async () => {
-  console.log('Bắt đầu chạy Auto Checkout lúc 17:00:00...');
+// Auto checkout đúng 17:00:00 giờ Việt Nam – dù server ở đâu cũng đúng!
+cron.schedule('0 17 * * *', async () => {
+  const nowVn = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  console.log(`Bắt đầu Auto Checkout - Hiện tại: ${nowVn}`);
+ 
   try {
     await runAutoCheckout();
-    console.log('Auto Checkout hoàn tất thành công.');
+    console.log('Auto Checkout hoàn tất thành công!');
   } catch (error) {
     console.error('Lỗi khi chạy Auto Checkout:', error);
   }
+}, {
+  timezone: "Asia/Ho_Chi_Minh"  // Bắt buộc phải có dòng này!
 });
+
 
 // Bộ xử lý lỗi toàn cục
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

@@ -4,7 +4,6 @@ import { query } from '../config/db';
 import { logActivity } from '../utils/logger';
 import ExcelJS from 'exceljs';
 
-
 const FIXED_SHIFT_ID = '00000000-0000-0000-0000-000000000001';
 
 // Hàm kiểm tra giờ check-in: Chỉ cho đến 9:30 AM giờ Việt Nam
@@ -12,8 +11,8 @@ const isCheckInAllowed = () => {
   const now = new Date();
   const vnHour = (now.getUTCHours() + 7) % 24; // Giờ Việt Nam (UTC+7)
   const vnMinute = now.getUTCMinutes();
-  if (vnHour > 10) return false;
-  if (vnHour === 10 && vnMinute > 30) return false;
+  if (vnHour > 9) return false;
+  if (vnHour === 9 && vnMinute > 30) return false;
   return true;
 };
 
@@ -205,7 +204,7 @@ export const checkOut = async (req: Request, res: Response, next: NextFunction) 
 export const getToday = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id as string;
-    const workDate = utcDateString(); // YYYY-MM-DD
+    const workDate = utcDateString(); // YYYY-MM-DD (Vietnam)
 
     const row = await findTodayByUser(userId, workDate);
 
@@ -243,16 +242,17 @@ export const getStats = async (req: Request, res: Response) => {
   monthStart.setDate(1);
   monthStart.setHours(0,0,0,0);
 
-  const rows = await query(`
-    SELECT status, late_minutes, total_hours 
-    FROM attendance 
-    WHERE user_id = $1 AND work_date >= $2
-  `, [userId, monthStart.toISOString().slice(0,10)]);
-
+  const rows = await query(`  
+    SELECT a.*
+    FROM attendance a
+    WHERE a.user_id = $1 AND a.work_date >= $2 AND a.work_date <= CURRENT_DATE
+  `, [userId, monthStart]);
   const lateDays = rows.rows.filter(r => r.status === 'late').length;
-  const totalHours = rows.rows.reduce((sum, r) => sum + (r.total_hours || 0), 0);
-  const workedDays = rows.rows.filter(r => r.check_in).length;
-  const onTimeRate = workedDays > 0 ? Math.round(((workedDays - lateDays) / workedDays) * 100) : 0;
+  // Convert total_hours to Number to avoid issues when DB returns numeric as string
+  const totalHours = rows.rows.reduce((sum, r) => sum + Number(r.total_hours ?? 0), 0);
+  const workedDays = rows.rows.filter(r => r.check_in != null).length;
+  const onTimeRate = workedDays > 0 ? Math.round(((workedDays - lateDays) / workedDays) * 100) : 100;
+  //console.log('DEBUG THÁNG 11:', { workedDays, lateDays, totalHours });
 
   res.json({
     monthlyHours: Number(totalHours.toFixed(1)),
@@ -374,17 +374,18 @@ export const exportHistoryExcel = async (req: Request, res: Response, next: Next
     ]);
 
     // Style header
-    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    headerRow.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FF2563EB' }, // xanh dương đậm đẹp
-    };
     headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
     headerRow.height = 30;
 
     // Thêm viền cho header
     headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }; // Chữ trắng
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF2563EB' }, // Xanh dương
+      };
+
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },

@@ -28,6 +28,18 @@ export const findUserById = async (id: string): Promise<UserRow | null> => {
   return res.rows[0] ?? null;
 };
 
+export const findUserByIdWithDepartment = async (id: string): Promise<any> => {
+  const sql = `
+    SELECT u.*, d.name as department_name
+    FROM users u
+    LEFT JOIN departments d ON u.department_id = d.id
+    WHERE u.id = $1
+    LIMIT 1
+  `;
+  const res = await query(sql, [id]);
+  return res.rows[0] ?? null;
+};
+
 // Tạo người dùng mới
 export const createUser = async (user: {
   full_name: string;
@@ -43,4 +55,27 @@ export const createUser = async (user: {
     [user.full_name, user.email, user.password ?? null, user.role ?? 'employee', user.phone ?? null]
   );
   return res.rows[0];
+};
+
+export const updateUserProfile = async (id: string, fields: Partial<UserRow>) => {
+  const sets: string[] = [];
+  const vals: any[] = [];
+  let idx = 1;
+  const allowed = ['full_name','phone','department_id','position','avatar_url','address','date_of_birth'];
+  for (const k of allowed) {
+    if ((fields as any)[k] !== undefined) {
+      sets.push(`${k} = $${idx++}`);
+      vals.push((fields as any)[k]);
+    }
+  }
+  if (sets.length === 0) return null;
+  vals.push(id);
+  const sql = `UPDATE users SET ${sets.join(', ')}, updated_at = NOW() WHERE id = $${idx} RETURNING *`;
+  const res = await query(sql, vals);
+  return res.rows[0] ?? null;
+};
+
+export const updateUserPassword = async (id: string, hashedPassword: string) => {
+  const res = await query(`UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2 RETURNING *`, [hashedPassword, id]);
+  return res.rows[0] ?? null;
 };

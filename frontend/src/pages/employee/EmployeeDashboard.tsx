@@ -4,20 +4,20 @@ import { useEffect, useMemo, useState } from 'react';
 import { http } from '@/services/http';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns'; 
+import { vi } from 'date-fns/locale';
 
 export default function EmployeeDashboard() {
   const [today, setToday] = useState<any | null>(null);
   const [history, setHistory] = useState<any[]>([]);
-  const [stats, setStats] = useState<{ monthlyHours: number; lateDays: number; onTimeRate: string } | null>(null);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const res = await http.get<{ today: any | null; history: any[]; stats: any }>('/attendance/dashboard?historyLimit=7');
         setToday(res.data.today ?? null);
+        setToday(res.data.today ?? null);
         setHistory(res.data.history ?? []);
-        setStats(res.data.stats ?? null);
       } catch (err) {
         // bỏ qua lỗi
       }
@@ -27,34 +27,51 @@ export default function EmployeeDashboard() {
 
   // Chuẩn bị nhãn và dữ liệu cho 7 ngày (đảm bảo ngày không có bản ghi hiển thị 0)
   const chartData = useMemo(() => {
-    const days = Array.from({ length: 7 }).map((_, i) => {
-      const d = subDays(new Date(), 6 - i);
-      return format(d, 'yyyy-MM-dd');
-    });
+  console.log('Biểu đồ - history nhận được:', history); // Log để kiểm tra
 
-    const labels = days.map(d => format(new Date(d), 'EEE'));
+  // Tạo 7 ngày gần nhất theo giờ VN
+  const nowVn = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const endDate = new Date(nowVn);
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(endDate);
+    d.setDate(endDate.getDate() - (6 - i));
+    return d;
+  });
 
-    const dataMap: Record<string, number> = {};
-    history.forEach(h => {
-      if (h.work_date) {
-        dataMap[h.work_date] = Number(h.total_hours || 0);
-      }
-    });
+  const labels = days.map(d => format(d, 'EEE', { locale: vi }));
+  console.log('Biểu đồ - labels 7 ngày:', labels);
 
-    const data = days.map(d => dataMap[d] ?? 0);
+  // FIX CHÍNH: Chuẩn hóa work_date theo giờ VN → 'yyyy-MM-dd'
+  const hoursMap: Record<string, number> = {};
+  history.forEach(h => {
+    if (h.work_date) {
+      const vnDateStr = new Date(h.work_date).toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+      const parts = vnDateStr.split(', ')[0].split('/'); // MM/DD/YYYY
+      const dateKey = `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`; // YYYY-MM-DD
+      hoursMap[dateKey] = Number(h.total_hours ?? 0);
+    }
+  });
+  console.log('Biểu đồ - hoursMap:', hoursMap);
 
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Giờ làm',
-          data,
-          backgroundColor: '#93C5FD',
-          borderRadius: 6,
-        },
-      ],
-    };
-  }, [history]);
+  // Tạo data
+  const data = days.map(d => {
+    const dateStr = format(d, 'yyyy-MM-dd');
+    return hoursMap[dateStr] ?? 0;
+  });
+  console.log('Biểu đồ - data cuối cùng:', data);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Giờ làm việc',
+        data,
+        backgroundColor: '#3B82F6',
+        borderRadius: 8,
+      },
+    ],
+  };
+}, [history]);
 
   const recentActivities = history.slice(0, 5);
 
@@ -125,7 +142,7 @@ export default function EmployeeDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Weekly Hours Chart */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-[#E5E7EB] p-6">
-            <h3 className="text-lg font-semibold text-[#111827] mb-6">Tổng quan giờ làm trong tuần</h3>
+            <h3 className="text-lg font-semibold text-[#111827] mb-6">Tổng quan giờ làm 7 ngày gần đây</h3>
             <div className="h-64">
               <Bar data={chartData} options={{
                 responsive: true,
@@ -182,7 +199,7 @@ export default function EmployeeDashboard() {
               <tbody>
                 {recentActivities.map((row, idx) => (
                   <tr key={idx} className="border-b border-[#F3F4F6] last:border-0">
-                    <td className="text-center py-4 text-base text-[#111827]">{row.work_date}</td>
+                    <td className="text-center py-4 text-base text-[#111827]">{row.work_date ? new Date(row.work_date).toLocaleDateString('vi-VN') : '-'}</td>
                     <td className="text-center py-4 text-base text-[#111827]">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '-'}</td>
                     <td className="text-center py-4 text-base text-[#9CA3AF]">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '-'}</td>
                     <td className="text-center py-4">

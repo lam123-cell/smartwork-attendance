@@ -3,7 +3,7 @@ import EmployeeLayout from "@/layouts/EmployeeLayout";
 import { CalendarDays, Clock, X, FileDown } from "lucide-react";
 import { http } from "@/services/http";
 import { useToast } from "@/hooks/use-toast";
-import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns'; 
 
 export default function AttendanceHistory() {
   // Mặc định: từ đầu tháng đến hôm nay
@@ -175,15 +175,14 @@ export default function AttendanceHistory() {
                 {history.map((row, idx) => {
                   // Only one shift (Ca hành chính 08:00-17:00) is used in this app
                   const shiftName = 'Ca hành chính';
-                  let color = 'bg-[#DCFCE7] text-[#15803D]'; // default
+                  let color = 'bg-[#DCFCE7] text-[#15803D]'; // present
                   if (row.status === 'late') color = 'bg-[#FEF9C3] text-[#CA8A04]';
                   if (row.status === 'absent') color = 'bg-[#FEE2E2] text-[#B91C1C]';
-
                   return (
                     <tr key={idx} className={idx % 2 === 1 ? "bg-[#F9FAFB]" : ""}>
                       <td className="px-4 py-3 text-center">{row.work_date ? new Date(row.work_date).toLocaleDateString('vi-VN') : '--'}</td>
                       <td className="px-4 py-3 text-center">{shiftName}</td>
-                      <td className="px-4 py-3 text-center">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '--'}</td>
+                      <td className="px-4 py-3 text-center">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '--'}</td> 
                       <td className="px-4 py-3 text-center">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '--'}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${color}`}>
