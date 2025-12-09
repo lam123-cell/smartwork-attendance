@@ -8,9 +8,11 @@ import authRoutes from './routes/auth';
 import attendanceRoutes from './routes/attendance';
 import attendanceAdminRoutes from './routes/attendanceAdmin';
 import reportsRoutes from './routes/reports';
+import reportAdminRoutes from './routes/reportAdmin';
 import profileRoutes from './routes/profile';
 import departmentsRoutes from './routes/departments';
 import employeesRoutes from './routes/employees';
+import dashboardRoutes from './routes/dashboard';
 import cron from 'node-cron';
 import { runAutoCheckout } from './jobs/autoCheckout';
 
@@ -36,9 +38,11 @@ app.get('/health', (_req: Request, res: Response) => {
 // Định tuyến API
 const apiPrefix = config.apiPrefix;
 app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/dashboard`, dashboardRoutes);
 app.use(`${apiPrefix}/attendance/admin`, attendanceAdminRoutes);
 app.use(`${apiPrefix}/attendance`, attendanceRoutes);
 app.use(`${apiPrefix}/reports`, reportsRoutes);
+app.use(`${apiPrefix}/reports/admin`, reportAdminRoutes);
 app.use(`${apiPrefix}/profile`, profileRoutes);
 app.use(`${apiPrefix}/departments`, departmentsRoutes);
 app.use(`${apiPrefix}/employees`, employeesRoutes);

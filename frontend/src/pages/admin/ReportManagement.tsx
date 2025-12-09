@@ -1,7 +1,8 @@
+import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/layouts/AdminLayout";
 import StatCard from "@/components/StatCard";
 import ChartCard from "@/components/ChartCard";
-import { Users, Clock, AlertTriangle, FileText, Download } from "lucide-react";
+import { Users, Clock, AlertTriangle, FileText, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -22,28 +23,149 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { http } from "@/services/http";
+import { useToast } from "@/hooks/use-toast";
 
-const barChartData = [
-  { department: "IT", hours: 1250 },
-  { department: "Kế toán", hours: 1000 },
-  { department: "Marketing", hours: 1100 },
-  { department: "HR", hours: 900 },
-  { department: "Sales", hours: 850 },
-];
+type MonthOption = { value: string; label: string };
+type DepartmentOption = { id: string; name: string };
+type RatioItem = { status: string; count: number; percentage: number };
+type DetailRow = { id: string; name: string; department: string; workDays: number; lateDays: number; totalHours: number; efficiency: number };
+type StatsResponse = { employeeCount: number; totalHours: number; lateCount: number };
+type HoursByDepartmentResponse = { data: { department: string; hours: number }[] };
+type AttendanceRatioResponse = { data: RatioItem[] };
+type DetailedReportResponse = { data: DetailRow[] };
 
-const pieChartData = [
-  { name: "Đúng giờ", value: 75.5, color: "#16A34A" },
-  { name: "Đi muộn", value: 18.2, color: "#F59E0B" },
-  { name: "Vắng mặt", value: 6.3, color: "#DC2626" },
-];
+const statusMap: Record<string, { name: string; color: string }> = {
+  present: { name: "Đúng giờ", color: "#16A34A" },
+  late: { name: "Đi muộn", color: "#DC2626" },
+  on_leave: { name: "Nghỉ phép", color: "#8B5CF6" },
+  absent: { name: "Vắng mặt", color: "#F59E0B" },
+};
 
-const detailedReports = [
-  { name: "Nguyễn Văn A", department: "IT", workDays: 22, lateDays: 2, totalHours: 176, efficiency: 95 },
-  { name: "Trần Thị B", department: "Kế toán", workDays: 21, lateDays: 1, totalHours: 168, efficiency: 98 },
-  { name: "Lê Văn C", department: "Marketing", workDays: 20, lateDays: 3, totalHours: 160, efficiency: 87 },
-];
+const formatNumber = (n: number) => n.toLocaleString("vi-VN");
 
 export default function Reports() {
+  const { toast } = useToast();
+
+  const [months, setMonths] = useState<MonthOption[]>([]);
+  const [departments, setDepartments] = useState<DepartmentOption[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedDept, setSelectedDept] = useState<string>("all");
+
+  const [stats, setStats] = useState({ employeeCount: 0, totalHours: 0, lateCount: 0 });
+  const [barData, setBarData] = useState<{ department: string; hours: number }[]>([]);
+  const [pieData, setPieData] = useState<{ name: string; value: number; color: string; count: number }[]>([]);
+  const [details, setDetails] = useState<DetailRow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+
+  const fetchFilters = async () => {
+    try {
+      const res = await http.get<{ months: MonthOption[]; departments: DepartmentOption[] }>("/reports/admin/filters");
+      setMonths(res.data.months || []);
+      setDepartments([{ id: "all", name: "Tất cả phòng ban" }, ...(res.data.departments || [])]);
+      if (res.data.months?.length) {
+        setSelectedMonth(res.data.months[0].value);
+      }
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err?.message || "Không tải được bộ lọc", variant: "destructive" });
+    }
+  };
+
+  const fetchReport = async (month: string, dept: string) => {
+    setLoading(true);
+    try {
+      const [statsRes, barRes, pieRes, detailRes] = await Promise.all([
+        http.get<StatsResponse>("/reports/admin/stats", { params: { month, departmentId: dept } }),
+        http.get<HoursByDepartmentResponse>("/reports/admin/hours-by-department", { params: { month, departmentId: dept } }),
+        http.get<AttendanceRatioResponse>("/reports/admin/attendance-ratio", { params: { month, departmentId: dept } }),
+        http.get<DetailedReportResponse>("/reports/admin/detailed", { params: { month, departmentId: dept } }),
+      ]);
+
+      setStats({
+        employeeCount: statsRes.data.employeeCount || 0,
+        totalHours: statsRes.data.totalHours || 0,
+        lateCount: statsRes.data.lateCount || 0,
+      });
+
+      setBarData((barRes.data?.data || []).map(d => ({ department: d.department, hours: Number(d.hours || 0) })));
+
+      setPieData((pieRes.data?.data || []).map(r => {
+        const meta = statusMap[r.status] || { name: r.status, color: "#6B7280" };
+        return { name: meta.name, value: r.percentage || 0, color: meta.color, count: r.count };
+      }));
+
+      setDetails(detailRes.data?.data || []);
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err?.message || "Không tải được báo cáo", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      setInitialLoading(true);
+      await fetchFilters();
+      setInitialLoading(false);
+    };
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (selectedMonth) {
+      fetchReport(selectedMonth, selectedDept);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMonth, selectedDept]);
+
+  const handleExport = async (type: "excel" | "pdf") => {
+    if (!selectedMonth) {
+      toast({ title: "Lỗi", description: "Vui lòng chọn tháng trước khi xuất báo cáo", variant: "destructive" });
+      return;
+    }
+
+    const setLoadingFn = type === "excel" ? setExportingExcel : setExportingPdf;
+    setLoadingFn(true);
+    try {
+      const ext = type === "excel" ? "xlsx" : "pdf";
+      const mime = type === "excel"
+        ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        : "application/pdf";
+
+      const res = await http.get<Blob>(`/reports/admin/export/${type}`, {
+        params: { month: selectedMonth, departmentId: selectedDept },
+        responseType: "blob",
+      });
+
+      const blob = new Blob([res.data], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `bao-cao-${selectedMonth}-${selectedDept}.${ext}`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err?.message || "Xuất báo cáo thất bại", variant: "destructive" });
+    } finally {
+      setLoadingFn(false);
+    }
+  };
+
+  const pieChartData = useMemo(() => pieData, [pieData]);
+
+  if (initialLoading) {
+    return (
+      <AdminLayout title="Báo cáo thống kê" subtitle="Trang báo cáo cung cấp số liệu tổng hợp theo tháng và theo phòng ban.">
+        <div className="flex items-center justify-center py-16 text-gray-600">
+          <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Đang tải...
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout
       title="Báo cáo thống kê"
@@ -53,40 +175,56 @@ export default function Reports() {
         {/* Filters */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex flex-wrap items-center gap-4">
-            <Select defaultValue="11-2025">
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-[282px] h-10">
                 <SelectValue placeholder="Chọn tháng" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="11-2025">Tháng 11/2025</SelectItem>
-                <SelectItem value="10-2025">Tháng 10/2025</SelectItem>
-                <SelectItem value="09-2025">Tháng 09/2025</SelectItem>
+                {months.map((m) => (
+                  <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            <Select defaultValue="all">
+            <Select value={selectedDept} onValueChange={setSelectedDept}>
               <SelectTrigger className="w-[282px] h-10">
                 <SelectValue placeholder="Phòng ban" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả phòng ban</SelectItem>
-                <SelectItem value="it">IT</SelectItem>
-                <SelectItem value="marketing">Marketing</SelectItem>
-                <SelectItem value="hr">HR</SelectItem>
+                {departments.map((d) => (
+                  <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            <Button className="bg-blue-600 hover:bg-blue-700 h-10 px-6">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 h-10 px-6"
+              onClick={() => fetchReport(selectedMonth, selectedDept)}
+              disabled={loading}
+            >
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Áp dụng bộ lọc
             </Button>
 
-            <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 h-10 ml-auto">
-              <FileText className="w-4 h-4 mr-2" />
+            <div className="flex-1" />
+
+            <Button
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50 h-10"
+              onClick={() => handleExport("excel")}
+              disabled={loading || exportingExcel || !selectedMonth}
+            >
+              {exportingExcel ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
               Xuất Excel
             </Button>
 
-            <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 h-10">
-              <Download className="w-4 h-4 mr-2" />
+            <Button
+              variant="outline"
+              className="border-red-600 text-red-600 hover:bg-red-50 h-10"
+              onClick={() => handleExport("pdf")}
+              disabled={loading || exportingPdf || !selectedMonth}
+            >
+              {exportingPdf ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
               Xuất PDF
             </Button>
           </div>
@@ -96,21 +234,21 @@ export default function Reports() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
             title="Tổng số nhân viên"
-            value="32 nhân viên"
+            value={`${formatNumber(stats.employeeCount)} nhân viên`}
             icon={Users}
             bgColor="bg-blue-100"
             iconColor="text-blue-600"
           />
           <StatCard
             title="Tổng giờ làm trong tháng"
-            value="5,120 giờ"
+            value={`${formatNumber(Math.round(stats.totalHours))} giờ`}
             icon={Clock}
             bgColor="bg-green-100"
             iconColor="text-green-600"
           />
           <StatCard
             title="Số lượt đi muộn"
-            value="45 lượt"
+            value={`${formatNumber(stats.lateCount)} lượt`}
             icon={AlertTriangle}
             bgColor="bg-yellow-100"
             iconColor="text-yellow-600"
@@ -122,7 +260,7 @@ export default function Reports() {
           {/* Bar Chart */}
           <ChartCard title="Tổng giờ làm theo phòng ban">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barChartData} layout="vertical">
+              <BarChart data={barData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis type="number" tick={{ fontSize: 12, fill: "#6B7280" }} />
                 <YAxis dataKey="department" type="category" tick={{ fontSize: 12, fill: "#6B7280" }} />
@@ -187,8 +325,8 @@ export default function Reports() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {detailedReports.map((report, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                {details.map((report) => (
+                  <tr key={report.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                       {report.name}
                     </td>
