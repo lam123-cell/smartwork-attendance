@@ -1,14 +1,18 @@
 import AdminLayout from "@/layouts/AdminLayout";
-import { Save, Upload, Clock } from "lucide-react";
-import { useState } from "react";
+import { Save, Upload, Clock, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { http } from "@/services/http";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SystemSettings() {
+  const { toast } = useToast();
+
   const [company, setCompany] = useState({
-    name: "Công ty TNHH ABC",
-    email: "contact@abc.com",
-    address: "123 Đường ABC, Quận 1, TP.HCM",
-    phone: "0123 456 789",
-    logo: "logo.png",
+    name: "",
+    email: "",
+    address: "",
+    phone: "",
+    logo: "",
   });
 
   const [workTime, setWorkTime] = useState({
@@ -18,6 +22,118 @@ export default function SystemSettings() {
     early: 10,
     autoAlert: true,
   });
+
+  const [shiftId, setShiftId] = useState<string | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const fetchSettings = async () => {
+    try {
+      const [settingsRes, shiftRes] = await Promise.all([
+        http.get<{ settings: any }>("/settings/settings"),
+        http.get<{ shifts: any[] }>("/settings/shifts", { params: { activeOnly: false } }),
+      ]);
+      const s = settingsRes.data.settings;
+      setCompany({
+        name: s.company_name || "",
+        email: s.company_email || "",
+        address: s.company_address || "",
+        phone: s.company_phone || "",
+        logo: s.company_logo || "",
+      });
+      const firstShift = shiftRes.data.shifts?.[0];
+      setShiftId(firstShift?.id || null);
+      setWorkTime({
+        start: firstShift?.start_time || "08:00",
+        end: firstShift?.end_time || "17:00",
+        late: firstShift?.late_threshold_minutes ?? 15,
+        early: firstShift?.early_leave_minutes ?? 10,
+        autoAlert: !!s.auto_alert_violation,
+      });
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err?.message || "Không tải được cài đặt", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await http.put("/settings/settings", {
+        company_name: company.name,
+        company_email: company.email,
+        company_phone: company.phone,
+        company_address: company.address,
+        company_logo: company.logo,
+        auto_alert_violation: workTime.autoAlert,
+        // optional GPS fields could be added later
+      });
+
+      if (shiftId) {
+        await http.put(`/settings/shifts/${shiftId}`, {
+          name: "Ca hành chính",
+          start_time: workTime.start,
+          end_time: workTime.end,
+          late_threshold_minutes: workTime.late,
+          early_leave_minutes: workTime.early,
+          is_active: true,
+        });
+      } else {
+        const created = await http.post<{ shift: any }>("/settings/shifts", {
+          name: "Ca hành chính",
+          start_time: workTime.start,
+          end_time: workTime.end,
+          late_threshold_minutes: workTime.late,
+          early_leave_minutes: workTime.early,
+          is_active: true,
+        });
+        setShiftId(created.data.shift?.id || null);
+      }
+
+      toast({ title: "Đã lưu", description: "Cập nhật cài đặt thành công", variant: "success" });
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err?.message || "Lưu cài đặt thất bại", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Lỗi", description: "Vui lòng chọn file ảnh", variant: "destructive" });
+      return;
+    }
+    const MAX = 2 * 1024 * 1024; // 2MB
+    if (file.size > MAX) {
+      toast({ title: "Lỗi", description: "Ảnh quá lớn (tối đa 2MB)", variant: "destructive" });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = String(reader.result || "");
+      try {
+        setUploadingLogo(true);
+        const res = await http.post<any>("/profile/avatar", { image: dataUrl });
+        setCompany((prev) => ({ ...prev, logo: res.data?.url || dataUrl }));
+        toast({ title: "Thành công", description: "Tải logo thành công", variant: "success" });
+      } catch (err: any) {
+        toast({ title: "Lỗi", description: "Không upload được logo", variant: "destructive" });
+      } finally {
+        setUploadingLogo(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
 
   return (
     <AdminLayout
@@ -91,18 +207,22 @@ export default function SystemSettings() {
               </label>
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-50">
-                  <Upload className="w-4 h-4 text-gray-500" />
+                  {uploadingLogo ? <Loader2 className="w-4 h-4 animate-spin text-gray-500" /> : <Upload className="w-4 h-4 text-gray-500" />}
                   <span>Chọn file</span>
-                  <input type="file" className="hidden" />
+                  <input type="file" className="hidden" accept="image/*" onChange={handleLogoChange} />
                 </label>
-                <span className="text-sm text-gray-600">{company.logo}</span>
+                <span className="text-sm text-gray-600 truncate max-w-[260px]" title={company.logo}>{company.logo || "Chưa có"}</span>
               </div>
             </div>
           </div>
 
           <div className="pt-2">
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-              <Save className="w-4 h-4" />
+            <button
+              onClick={handleSave}
+              disabled={saving || loading}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition disabled:opacity-60"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Lưu thay đổi
             </button>
           </div>
@@ -190,8 +310,12 @@ export default function SystemSettings() {
           </div>
 
           <div className="pt-2">
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-              <Save className="w-4 h-4" />
+            <button
+              onClick={handleSave}
+              disabled={saving || loading}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition disabled:opacity-60"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Lưu cấu hình
             </button>
           </div>
