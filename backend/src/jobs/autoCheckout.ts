@@ -13,9 +13,15 @@ export const runAutoCheckout = async () => {
   const autoTimeForDb = autoTimeVn.toISOString();
 
   console.log('Auto checkout sẽ diễn ra lúc (giờ VN):', autoTimeVn.toLocaleString('vi-VN'));
-  // → In ra xem thử: 03/12/2025, 17:00:00 → đúng!
+
+  // Chỉ chạy khi đã qua 17:00 VN
+  if (nowVn < autoTimeVn) {
+    console.log('Chưa đến 17:00 VN, bỏ qua auto checkout');
+    return;
+  }
 
   try {
+    // ========== Auto checkout cho những người đã check-in nhưng chưa check-out ==========
     const res = await query(`
       SELECT id, user_id, check_in 
       FROM attendance
@@ -24,12 +30,6 @@ export const runAutoCheckout = async () => {
         AND check_out IS NULL
         AND is_auto_checkout = FALSE
     `, [todayVn]);
-
-    // Chỉ chạy khi đã qua 17:00 VN
-    if (nowVn < autoTimeVn) {
-      console.log('Chưa đến 17:00 VN, bỏ qua auto checkout');
-      return;
-    }
 
     for (const row of res.rows) {
       const checkInVn = new Date(row.check_in);
@@ -55,7 +55,56 @@ export const runAutoCheckout = async () => {
     }
 
     console.log(`Auto checkout thành công: ${res.rows.length} bản ghi ngày ${todayVn}`);
+
+    // ========== Mark absent/on_leave cho những nhân viên chưa check-in ==========
+    // Lấy danh sách tất cả nhân viên active
+    const allEmployees = await query(`
+      SELECT id, full_name, email
+      FROM users
+      WHERE is_active = true AND role = 'employee'
+    `);
+
+    // Lấy danh sách nhân viên đã có attendance hôm nay
+    const existingAttendance = await query(`
+      SELECT DISTINCT user_id
+      FROM attendance
+      WHERE work_date = $1
+    `, [todayVn]);
+
+    const existingUserIds = new Set(existingAttendance.rows.map((r: any) => r.user_id));
+
+    // Xác định xem hôm nay có phải Chủ nhật không
+    const dayOfWeek = nowVn.getDay(); // 0 = Chủ nhật, 1-6 = Thứ 2-7
+    const isSunday = dayOfWeek === 0;
+
+    let insertedCount = 0;
+
+    for (const emp of allEmployees.rows) {
+      // Nếu nhân viên chưa có attendance hôm nay → chèn record
+      if (!existingUserIds.has(emp.id)) {
+        const status = isSunday ? 'on_leave' : 'absent';
+        const note = isSunday ? 'Nghỉ cuối tuần' : 'Vắng mặt';
+
+        await query(`
+          INSERT INTO attendance (user_id, work_date, status, note, check_in, check_out, total_hours, is_auto_checkout, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, NULL, NULL, 0, FALSE, NOW(), NOW())
+        `, [emp.id, todayVn, status, note]);
+
+        await logActivity(
+          emp.id,
+          'ATTENDANCE_AUTO_MARK',
+          `Tự động đánh dấu ${status === 'absent' ? 'vắng mặt' : 'nghỉ cuối tuần'} ngày ${todayVn}`,
+          'attendance',
+          undefined
+        );
+
+        insertedCount++;
+      }
+    }
+
+    console.log(`Đánh dấu absent/on_leave: ${insertedCount} nhân viên chưa check-in ngày ${todayVn}${isSunday ? ' (Chủ nhật)' : ''}`);
+
   } catch (err) {
-    console.error('Auto checkout lỗi:', err);
+    console.error('Auto checkout/mark absent lỗi:', err);
   }
 };

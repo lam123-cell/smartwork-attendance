@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Clock, Home, History, FileText, User, LogOut } from "lucide-react";
+import { Clock, Home, History, FileText, User, LogOut, AlertCircle } from "lucide-react";
 import { useEffect, useState } from 'react';
 import { http } from '@/services/http';
 import { toast } from '@/components/ui/use-toast';
@@ -16,6 +16,7 @@ const menuItems = [
   { path: "/employee-dashboard", label: "Trang chủ", icon: Home },
   { path: "/checkin", label: "Chấm công", icon: Clock },
   { path: "/history", label: "Lịch sử chấm công", icon: History },
+  { path: "/leave", label: "Nghỉ phép", icon: AlertCircle },
   { path: "/personal-report", label: "Báo cáo cá nhân", icon: FileText },
   { path: "/employee-profile", label: "Hồ sơ cá nhân", icon: User },
 ];

@@ -37,3 +37,11 @@ export const requireRole = (roles: string | string[]) => {
     next();
   };
 };
+
+// Middleware kiểm tra quyền admin
+export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const user = (req as any).user;
+  if (!user) return res.status(401).json({ message: 'Yêu cầu đăng nhập' });
+  if (user.role !== 'admin') return res.status(403).json({ message: 'Chỉ admin có thể truy cập' });
+  next();
+};

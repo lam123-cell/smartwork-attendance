@@ -6,11 +6,13 @@ import AdminProfile from "@/pages/admin/AdminProfile";
 import ReportManagement from "@/pages/admin/ReportManagement";
 import EmployeeManagement from "@/pages/admin/EmployeeManagement";
 import SystemSettings from "@/pages/admin/SystemSettings";
+import AdminLeaveRequests from "@/pages/admin/AdminLeaveRequests";
 import EmployeeDashboard from "@/pages/employee/EmployeeDashboard";
 import CheckIN from "@/pages/employee/CheckIn";
 import AttendanceHistory from "@/pages/employee/AttendanceHistory";
 import PersonalReport from "@/pages/employee/PersonalReport";
 import EmployeeProfile from "@/pages/employee/EmployeeProfile";
+import EmployeeLeave from "@/pages/employee/Leave";
 import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AttendanceManagement from "@/pages/admin/AttendanceManagement";
@@ -72,6 +74,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/leave-requests"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminLeaveRequests />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Employee Routes (only employee) */}
         <Route
@@ -111,6 +121,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["employee"]}>
               <EmployeeProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leave"
+          element={
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <EmployeeLeave />
             </ProtectedRoute>
           }
         />

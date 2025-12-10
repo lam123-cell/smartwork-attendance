@@ -14,6 +14,7 @@ import departmentsRoutes from './routes/departments';
 import employeesRoutes from './routes/employees';
 import dashboardRoutes from './routes/dashboard';
 import systemSettingsRoutes from './routes/systemSettings';
+import leaveRequestRoutes from './routes/leaveRequests';
 import cron from 'node-cron';
 import { runAutoCheckout } from './jobs/autoCheckout';
 
@@ -48,6 +49,7 @@ app.use(`${apiPrefix}/profile`, profileRoutes);
 app.use(`${apiPrefix}/departments`, departmentsRoutes);
 app.use(`${apiPrefix}/employees`, employeesRoutes);
 app.use(`${apiPrefix}/settings`, systemSettingsRoutes);
+app.use(`${apiPrefix}/leave-requests`, leaveRequestRoutes);
 
 // Auto checkout đúng 17:00:00 giờ Việt Nam – dù server ở đâu cũng đúng!
 cron.schedule('0 17 * * *', async () => {

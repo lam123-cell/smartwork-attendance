@@ -10,6 +10,7 @@ import {
   User,
   LogOut,
   Clock,
+  AlertCircle,
 } from "lucide-react";
 import { http } from '@/services/http';
 import { toast } from '@/components/ui/use-toast';
@@ -18,6 +19,7 @@ const menuItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/employees", label: "Quản lý nhân viên", icon: Users },
   { path: "/attendance", label: "Quản lý chấm công", icon: Calendar },
+  { path: "/leave-requests", label: "Quản lý nghỉ phép", icon: AlertCircle },
   { path: "/reports", label: "Báo cáo", icon: FileText },
   { path: "/settings", label: "Cài đặt hệ thống", icon: Settings },
   { path: "/profile", label: "Hồ sơ cá nhân", icon: User },
