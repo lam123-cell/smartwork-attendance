@@ -3,6 +3,8 @@ import { getClientForTx, findTodayByUser, createAttendance, updateAttendance, ge
 import { query } from '../config/db';
 import { logActivity } from '../utils/logger';
 import ExcelJS from 'exceljs';
+import { getSettings } from '../repositories/systemSettingsRepository';
+import { getDistance } from 'geolib';
 
 const FIXED_SHIFT_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -26,7 +28,7 @@ const parseTimeToMinutes = (timeStr: string) => {
 
 export const checkIn = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req as any).user.id as string;
-  let {latitude, longitude, note } = req.body as any;
+  let { latitude, longitude, accuracy, address, note } = req.body as any;
   // Kiểm tra giờ check-in (thêm mới)
   if (!isCheckInAllowed()) {
     return res.status(400).json({ 
@@ -36,6 +38,22 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
 
   // Luôn gán ca hành chính 
   const shift_id = FIXED_SHIFT_ID;
+
+  // Lấy cấu hình GPS để xác thực vị trí
+  const settings = await getSettings();
+  const requireGps = settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
+  if (requireGps) {
+    if (latitude == null || longitude == null) {
+      return res.status(400).json({ message: 'Yêu cầu vị trí GPS' });
+    }
+    const distance = getDistance(
+      { latitude: Number(latitude), longitude: Number(longitude) },
+      { latitude: Number(settings.gps_latitude), longitude: Number(settings.gps_longitude) }
+    );
+    if (distance > Number(settings.max_distance_meters)) {
+      return res.status(403).json({ message: `Vị trí quá xa công ty (${distance}m > ${settings.max_distance_meters}m)` });
+    }
+  }
 
   const client = await getClientForTx();
   try {
@@ -74,6 +92,8 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
         check_in: now.toISOString(),
         latitude: latitude ?? null,
         longitude: longitude ?? null,
+        location_accuracy: accuracy ?? null,
+        location_address: address ?? null,
         late_minutes: lateMinutes,
         status,
         note: note ?? null,
@@ -114,6 +134,8 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
       check_in: now.toISOString(),
       latitude: latitude ?? null,
       longitude: longitude ?? null,
+      location_accuracy: accuracy ?? null,
+      location_address: address ?? null,
       status,
       work_date: workDate,
       late_minutes: lateMinutes,
@@ -147,6 +169,7 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
 // Check-out
 export const checkOut = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req as any).user.id as string;
+  let { latitude, longitude, accuracy, address } = req.body as any;
   const client = await getClientForTx();
   try {
     await client.query('BEGIN');
@@ -166,6 +189,24 @@ export const checkOut = async (req: Request, res: Response, next: NextFunction) 
       return res.status(400).json({ message: 'Bạn đã check-out rồi' });
     }
 
+    // Đảm bảo GPS khi có cấu hình
+    const settings = await getSettings();
+    const requireGps = settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
+    if (requireGps) {
+      if (latitude == null || longitude == null) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ message: 'Yêu cầu vị trí GPS' });
+      }
+      const distance = getDistance(
+        { latitude: Number(latitude), longitude: Number(longitude) },
+        { latitude: Number(settings.gps_latitude), longitude: Number(settings.gps_longitude) }
+      );
+      if (distance > Number(settings.max_distance_meters)) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ message: `Vị trí quá xa công ty (${distance}m > ${settings.max_distance_meters}m)` });
+      }
+    }
+
     const now = new Date();
     const checkInDate = new Date(row.check_in);
     const diffMs = now.getTime() - checkInDate.getTime();
@@ -174,6 +215,10 @@ export const checkOut = async (req: Request, res: Response, next: NextFunction) 
     const updated = await updateAttendance(client, row.id, {
       check_out: now.toISOString(),
       total_hours: hours,
+      latitude: latitude ?? row.latitude ?? null,
+      longitude: longitude ?? row.longitude ?? null,
+      location_accuracy: accuracy ?? row.location_accuracy ?? null,
+      location_address: address ?? row.location_address ?? null,
     });
 
     await client.query('COMMIT');

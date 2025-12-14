@@ -10,6 +10,8 @@ export type AttendanceRow = {
   total_hours?: number | null;
   latitude?: number | null;
   longitude?: number | null;
+  location_accuracy?: number | null;
+  location_address?: string | null;
   status?: string | null;
   work_date?: string | null;
   late_minutes?: number | null;
@@ -35,14 +37,16 @@ export const createAttendance = async (
   data: Partial<AttendanceRow>
 ) => {
   const res = await client.query(
-    `INSERT INTO attendance (user_id, shift_id, check_in, latitude, longitude, status, work_date, late_minutes, note, is_auto_checkout)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+    `INSERT INTO attendance (user_id, shift_id, check_in, latitude, longitude, location_accuracy, location_address, status, work_date, late_minutes, note, is_auto_checkout)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
     [
       data.user_id,
       data.shift_id ?? null,
       data.check_in ?? null,
       data.latitude ?? null,
       data.longitude ?? null,
+      data.location_accuracy ?? null,
+      data.location_address ?? null,
       data.status ?? 'present',
       data.work_date ?? null,
       data.late_minutes ?? 0,

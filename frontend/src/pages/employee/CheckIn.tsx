@@ -5,6 +5,19 @@ import { http } from "@/services/http";
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import L from 'leaflet';
+
+// Ensure default Leaflet marker icons load correctly in Vite
+const DefaultIcon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+// @ts-ignore
+L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function CheckIn() {
   const [currentTime, setCurrentTime] = useState("06:20:29");
@@ -32,6 +45,28 @@ export default function CheckIn() {
     fetchStats();
   }, []);
 
+  // Get current geolocation + reverse geocode
+  const getLocation = async (): Promise<{ latitude: number; longitude: number; accuracy?: number; address?: string; } > => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject(new Error('Trình duyệt không hỗ trợ GPS'));
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude, longitude, accuracy } = pos.coords;
+            const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await resp.json().catch(() => ({}));
+            resolve({ latitude, longitude, accuracy, address: data?.display_name || 'Không xác định' });
+          } catch (e) {
+            const { latitude, longitude, accuracy } = pos.coords;
+            resolve({ latitude, longitude, accuracy });
+          }
+        },
+        (err) => reject(err),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  };
+
   // Reusable fetch functions so handlers can refresh after actions
   const fetchToday = async () => {
     try {
@@ -54,7 +89,8 @@ export default function CheckIn() {
   const handleCheckIn = async () => {
     setLoading(true);
     try {
-    const res = await http.post<{ attendance: any }>('/attendance/checkin', {});
+    const location = await getLocation();
+    const res = await http.post<{ attendance: any }>('/attendance/checkin', location);
     setAttendance(res.data.attendance);
     toast({ title: 'Check-in thành công', description: 'Bạn đã check-in thành công', duration: 4000 });
     // refresh stats and today's attendance
@@ -71,7 +107,8 @@ export default function CheckIn() {
   const handleCheckOut = async () => {
     setLoading(true);
     try {
-      const res = await http.post<{ attendance: any }>('/attendance/checkout', {});
+      const location = await getLocation();
+      const res = await http.post<{ attendance: any }>('/attendance/checkout', location);
       setAttendance(res.data.attendance);
       toast({ title: 'Check-out thành công', description: 'Bạn đã check-out', duration: 4000 });
       // refresh stats and today's attendance
@@ -144,6 +181,22 @@ export default function CheckIn() {
                 <div className="flex justify-between">
                   <span className="text-base text-[#4B5563]">Giờ check-in:</span>
                   <span className="text-base font-medium text-[#111827]">{attendance?.check_in ? new Date(attendance.check_in).toLocaleTimeString() : '--'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-base text-[#4B5563]">Vị trí:</span>
+                  <span className="text-base font-medium text-[#111827] text-right">
+                    {attendance?.latitude && attendance?.longitude ? (
+                      <>
+                        {attendance?.location_address || `${attendance.latitude}, ${attendance.longitude}`}
+                        <div className="mt-2 h-32 w-full">
+                          <MapContainer center={[attendance.latitude, attendance.longitude]} zoom={16} style={{ height: '100%', width: '100%' }}>
+                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                            <Marker position={[attendance.latitude, attendance.longitude]} />
+                          </MapContainer>
+                        </div>
+                      </>
+                    ) : '--'}
+                  </span>
                 </div>
               </div>
               <div className="space-y-4">

@@ -23,6 +23,12 @@ export default function SystemSettings() {
     autoAlert: true,
   });
 
+  const [gpsSettings, setGpsSettings] = useState({
+    latitude: 0,
+    longitude: 0,
+    maxDistance: 200,
+  });
+
   const [shiftId, setShiftId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -42,6 +48,11 @@ export default function SystemSettings() {
         address: s.company_address || "",
         phone: s.company_phone || "",
         logo: s.company_logo || "",
+      });
+      setGpsSettings({
+        latitude: Number(s.gps_latitude ?? 0),
+        longitude: Number(s.gps_longitude ?? 0),
+        maxDistance: Number(s.max_distance_meters ?? 200),
       });
       const firstShift = shiftRes.data.shifts?.[0];
       setShiftId(firstShift?.id || null);
@@ -68,6 +79,9 @@ export default function SystemSettings() {
         company_phone: company.phone,
         company_address: company.address,
         company_logo: company.logo,
+        gps_latitude: gpsSettings.latitude,
+        gps_longitude: gpsSettings.longitude,
+        max_distance_meters: gpsSettings.maxDistance,
         auto_alert_violation: workTime.autoAlert,
         // optional GPS fields could be added later
       });
@@ -309,6 +323,52 @@ export default function SystemSettings() {
             </div>
           </div>
 
+          <div className="pt-2">
+            <button
+              onClick={handleSave}
+              disabled={saving || loading}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition disabled:opacity-60"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Lưu cấu hình
+            </button>
+          </div>
+        </div>
+
+        {/* Cấu hình GPS chấm công */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-4">
+          <h3 className="font-semibold text-gray-900">Cấu hình GPS chấm công</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Vĩ độ công ty</label>
+              <input
+                type="number"
+                step="0.000001"
+                value={gpsSettings.latitude}
+                onChange={(e) => setGpsSettings({ ...gpsSettings, latitude: Number(e.target.value) })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kinh độ công ty</label>
+              <input
+                type="number"
+                step="0.000001"
+                value={gpsSettings.longitude}
+                onChange={(e) => setGpsSettings({ ...gpsSettings, longitude: Number(e.target.value) })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Khoảng cách tối đa (mét)</label>
+              <input
+                type="number"
+                value={gpsSettings.maxDistance}
+                onChange={(e) => setGpsSettings({ ...gpsSettings, maxDistance: Number(e.target.value) })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
           <div className="pt-2">
             <button
               onClick={handleSave}
