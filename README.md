@@ -44,7 +44,7 @@ Backend áp dụng mô hình **Three-Layer Architecture**, giúp mã nguồn d�
 ### 🔹 Các module hỗ trợ
 - `middlewares/`: Xử lý xác thực JWT, kiểm tra quyền truy cập, xử lý lỗi.  
 - `utils/`: Hàm tiện ích (ngày giờ, mã hóa JWT, phản hồi API).  
-- `jobs/`: Tác vụ tự động (như tổng hợp chấm công cuối ngày).
+- `jobs/`: Tác vụ tự động (như tự Check-out cuối ngày).
 
 ---
 
@@ -131,18 +131,18 @@ SmartWork-Attendance-System/
 │  │  │     └─ SummaryCard.tsx
 │  │  │
 │  │  ├─ services/
-│  │  │  ├─ api.js
-│  │  │  └─ attendanceService.js
+│  │  │  ├─ api.ts
+│  │  │  └─ attendanceService.ts
 │  │  │
 │  │  ├─ hooks/
-│  │  │  ├─ useAuth.js
-│  │  │  ├─ useFetch.js
-│  │  │  └─ useAttendance.js
+│  │  │  ├─ useAuth.ts
+│  │  │  ├─ useFetch.ts
+│  │  │  └─ useAttendance.ts
 │  │  │
 │  │  ├─ utils/
-│  │  │  ├─ date.js
-│  │  │  ├─ geo.js
-│  │  │  └─ format.js
+│  │  │  ├─ date.ts
+│  │  │  ├─ geo.ts
+│  │  │  └─ format.ts
 │  │  │
 │  │  ├─ assets/
 │  │  │  ├─ icons/
@@ -157,54 +157,54 @@ SmartWork-Attendance-System/
 │
 └─ backend/
    ├─ src/
-   │  ├─ app.js                    
+   │  ├─ app.ts                    
    │  │
    │  ├─ config/
-   │  │  ├─ db.js                  
-   │  │  ├─ env.js
-   │  │  └─ supabase.js
+   │  │  ├─ db.ts                  
+   │  │  ├─ env.ts
+   │  │  └─ supabase.ts
    │  │
    │  ├─ routes/
-   │  │  ├─ auth.routes.js
-   │  │  ├─ employee.routes.js
-   │  │  ├─ attendance.routes.js
-   │  │  └─ admin.routes.js
+   │  │  ├─ auth.routes.ts
+   │  │  ├─ employee.routes.ts
+   │  │  ├─ attendance.routes.ts
+   │  │  └─ admin.routes.ts
    │  │
    │  ├─ controllers/
-   │  │  ├─ auth.controller.js
-   │  │  ├─ employee.controller.js
-   │  │  ├─ attendance.controller.js
-   │  │  └─ report.controller.js
+   │  │  ├─ auth.controller.ts
+   │  │  ├─ employee.controller.ts
+   │  │  ├─ attendance.controller.ts
+   │  │  └─ report.controller.ts
    │  │
    │  ├─ services/
-   │  │  ├─ auth.service.js
-   │  │  ├─ employee.service.js
-   │  │  ├─ attendance.service.js
-   │  │  └─ report.service.js
+   │  │  ├─ auth.service.ts
+   │  │  ├─ employee.service.ts
+   │  │  ├─ attendance.service.ts
+   │  │  └─ report.service.ts
    │  │
    │  ├─ repositories/
-   │  │  ├─ employee.repo.js
-   │  │  ├─ attendance.repo.js
-   │  │  ├─ user.repo.js
-   │  │  └─ report.repo.js
+   │  │  ├─ employee.repo.ts
+   │  │  ├─ attendance.repo.ts
+   │  │  ├─ user.repo.ts
+   │  │  └─ report.repots
    │  │
    │  ├─ middlewares/
-   │  │  ├─ auth.middleware.js
-   │  │  ├─ error.middleware.js
-   │  │  └─ validation.middleware.js
+   │  │  ├─ auth.middleware.ts
+   │  │  ├─ error.middleware.ts
+   │  │  └─ validation.middleware.ts
    │  │
    │  ├─ utils/
-   │  │  ├─ geo.js
-   │  │  ├─ date.utils.js
-   │  │  ├─ jwt.js
-   │  │  └─ response.js
+   │  │  ├─ geo.ts
+   │  │  ├─ date.utils.ts
+   │  │  ├─ jwt.ts
+   │  │  └─ response.ts
    │  │
    │  ├─ jobs/
-   │  │  └─ attendanceJob.js       
+   │  │  └─ attendanceJob.ts       
    │  │
    │  └─ tests/
-   │     ├─ auth.test.js
-   │     └─ attendance.test.js
+   │     ├─ auth.test.ts
+   │     └─ attendance.test.ts
    │
    ├─ migrations/
    ├─ .env
