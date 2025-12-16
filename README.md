@@ -186,7 +186,7 @@ SmartWork-Attendance-System/
    │  │  ├─ employee.repo.ts
    │  │  ├─ attendance.repo.ts
    │  │  ├─ user.repo.ts
-   │  │  └─ report.repots
+   │  │  └─ report.repo.ts
    │  │
    │  ├─ middlewares/
    │  │  ├─ auth.middleware.ts
