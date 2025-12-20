@@ -263,8 +263,15 @@ export default function Reports() {
               <BarChart data={barData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis type="number" tick={{ fontSize: 12, fill: "#6B7280" }} />
-                <YAxis dataKey="department" type="category" tick={{ fontSize: 12, fill: "#6B7280" }} />
-                <Tooltip />
+                {/* Hiển thị nhãn rút gọn với dấu chấm lửng để tránh tràn chữ */}
+                <YAxis
+                  dataKey="department"
+                  type="category"
+                  tickFormatter={(v: string) => truncateDept(v)}
+                  width={160}
+                  tick={{ fontSize: 12, fill: "#6B7280" }}
+                />
+                <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="hours" fill="#93C5FD" name="Giờ làm" />
               </BarChart>
             </ResponsiveContainer>
@@ -366,4 +373,27 @@ export default function Reports() {
       </div>
     </AdminLayout>
   );
+}
+
+// Tooltip tùy biến: hiển thị tên phòng ban và giờ làm khi hover
+function CustomTooltip({ active, payload }: any) {
+  if (active && payload && payload.length) {
+    const dept = payload[0]?.payload?.department ?? '';
+    const hours = payload[0]?.value ?? 0;
+    return (
+      <div className="bg-white border border-gray-200 rounded-md p-3 shadow-sm">
+        <div className="text-sm font-medium text-gray-900">{dept}</div>
+        <div className="text-xs text-gray-600">Giờ làm: {hours}</div>
+      </div>
+    );
+  }
+  return null;
+}
+
+// Rút gọn tên phòng ban nếu quá dài
+function truncateDept(name: string, max = 18) {
+  if (!name) return '';
+  const plain = String(name);
+  if (plain.length <= max) return plain;
+  return plain.slice(0, Math.max(0, max - 1)) + '…';
 }

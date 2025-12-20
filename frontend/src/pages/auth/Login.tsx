@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, Mail, Lock, LogIn, Building2 } from "lucide-react";
+import { Clock, Mail, LogIn, Building2, Eye, EyeOff } from "lucide-react";
 import { http } from '@/services/http';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,14 +132,25 @@ export default function Login() {
                 <div className="relative">
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Nhập mật khẩu"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-[50px] pl-4 pr-10"
+                    className="h-[50px] pl-4 pr-12"
                     required
                   />
-                  <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -157,9 +169,6 @@ export default function Login() {
                     Ghi nhớ tôi
                   </Label>
                 </div>
-                <a href="#" className="text-sm text-blue-600 hover:underline">
-                  Quên mật khẩu?
-                </a>
               </div>
 
               {/* Submit Button */}

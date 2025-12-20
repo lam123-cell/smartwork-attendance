@@ -1,6 +1,6 @@
 import AdminLayout from "@/layouts/AdminLayout";
 import { Save, Upload, Clock, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { http } from "@/services/http";
 import { useToast } from "@/hooks/use-toast";
 
@@ -73,6 +73,13 @@ export default function SystemSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const normalizeTime = (t: string) => {
+        if (!t) return t;
+        const parts = String(t).split(":");
+        const hh = parts[0].padStart(2, "0");
+        const mm = (parts[1] ?? "00").padStart(2, "0");
+        return `${hh}:${mm}`;
+      };
       await http.put("/settings/settings", {
         company_name: company.name,
         company_email: company.email,
@@ -89,8 +96,8 @@ export default function SystemSettings() {
       if (shiftId) {
         await http.put(`/settings/shifts/${shiftId}`, {
           name: "Ca hành chính",
-          start_time: workTime.start,
-          end_time: workTime.end,
+          start_time: normalizeTime(workTime.start),
+          end_time: normalizeTime(workTime.end),
           late_threshold_minutes: workTime.late,
           early_leave_minutes: workTime.early,
           is_active: true,
@@ -98,8 +105,8 @@ export default function SystemSettings() {
       } else {
         const created = await http.post<{ shift: any }>("/settings/shifts", {
           name: "Ca hành chính",
-          start_time: workTime.start,
-          end_time: workTime.end,
+          start_time: normalizeTime(workTime.start),
+          end_time: normalizeTime(workTime.end),
           late_threshold_minutes: workTime.late,
           early_leave_minutes: workTime.early,
           is_active: true,
@@ -166,7 +173,7 @@ export default function SystemSettings() {
               <input
                 type="text"
                 value={company.name}
-                onChange={(e) =>
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setCompany({ ...company, name: e.target.value })
                 }
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
@@ -225,7 +232,15 @@ export default function SystemSettings() {
                   <span>Chọn file</span>
                   <input type="file" className="hidden" accept="image/*" onChange={handleLogoChange} />
                 </label>
-                <span className="text-sm text-gray-600 truncate max-w-[260px]" title={company.logo}>{company.logo || "Chưa có"}</span>
+                {company.logo ? (
+                  <img
+                    src={company.logo}
+                    alt="Logo công ty"
+                    className="h-10 w-10 object-contain border border-gray-200 rounded"
+                  />
+                ) : (
+                  <span className="text-sm text-gray-600">Chưa có</span>
+                )}
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { http } from '@/services/http';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { format } from 'date-fns'; 
-import { vi } from 'date-fns/locale';
+import { vi } from 'date-fns/locale'; 
 
 export default function EmployeeDashboard() {
   const [today, setToday] = useState<any | null>(null);
@@ -203,8 +203,18 @@ export default function EmployeeDashboard() {
                     <td className="text-center py-4 text-base text-[#111827]">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '-'}</td>
                     <td className="text-center py-4 text-base text-[#9CA3AF]">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '-'}</td>
                     <td className="text-center py-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${row.status === 'late' ? 'bg-[#FEE2E2] text-[#B91C1C]' : row.status === 'present' ? 'bg-[#DCFCE7] text-[#15803D]' : 'bg-[#F3F4F6] text-[#4B5563]'}`}>
-                        {row.status === 'late' ? 'Đi muộn' : row.status === 'present' ? 'Đúng giờ' : row.status}
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                        row.status === 'late' ? 'bg-[#FEE2E2] text-[#B91C1C]' : 
+                        row.status === 'present' ? 'bg-[#DCFCE7] text-[#15803D]' : 
+                        row.status === 'on_leave' ? 'bg-[#DBEAFE] text-[#1D4ED8]' : 
+                        row.status === 'absent' ? 'bg-[#FEE2E2] text-[#B91C1C]' : 
+                        'bg-[#F3F4F6] text-[#4B5563]'
+                      }`}>
+                        {row.status === 'late' ? 'Trễ' : 
+                         row.status === 'present' ? 'Đúng giờ' : 
+                         row.status === 'on_leave' ? 'Nghỉ phép' : 
+                         row.status === 'absent' ? 'Vắng' : 
+                         'Không xác định'}
                       </span>
                     </td>
                   </tr>

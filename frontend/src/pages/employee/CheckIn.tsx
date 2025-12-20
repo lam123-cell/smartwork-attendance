@@ -62,7 +62,10 @@ export default function CheckIn() {
           }
         },
         (err) => reject(err),
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true,
+          timeout: 30000, 
+          maximumAge: 0
+           }
       );
     });
   };
@@ -97,7 +100,10 @@ export default function CheckIn() {
     await fetchStats();
     await fetchToday();
     } catch (err: any) {
-      const msg = err?.message ?? (err?.message || JSON.stringify(err));
+      let msg = err?.message || 'Có lỗi xảy ra';
+      if (err?.code === 1) msg = 'Bạn chưa cấp quyền truy cập vị trí';
+      else if (err?.code === 2) msg = 'Không thể xác định vị trí, vui lòng kiểm tra GPS';
+      else if (err?.code === 3) msg = 'Hết thời gian chờ lấy vị trí, vui lòng thử lại';
       toast({ title: 'Lỗi', description: msg, duration: 6000 , variant: 'destructive' });
     } finally {
       setLoading(false);
@@ -115,7 +121,10 @@ export default function CheckIn() {
       await fetchStats();
       await fetchToday();
     } catch (err: any) {
-      const msg = err?.message ?? (err?.message || JSON.stringify(err));
+      let msg = err?.message || 'Có lỗi xảy ra';
+      if (err?.code === 1) msg = 'Bạn chưa cấp quyền truy cập vị trí';
+      else if (err?.code === 2) msg = 'Không thể xác định vị trí, vui lòng kiểm tra GPS';
+      else if (err?.code === 3) msg = 'Hết thời gian chờ lấy vị trí, vui lòng thử lại';
       toast({ title: 'Lỗi', description: msg, duration: 6000 });
     } finally {
       setLoading(false);
@@ -165,50 +174,76 @@ export default function CheckIn() {
           {/* Thông tin hôm nay */}
           <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
             <h3 className="text-xl font-semibold text-[#111827] mb-6">Thông tin hôm nay</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Các thông tin text - giữ grid 2 cột */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-base text-[#4B5563]">Ca làm:</span>
                   <span className="text-base font-medium text-[#111827]">
                     {attendance?.shift_name || 'Ca hành chính'}
                     {attendance?.shift_time && (
-                      <span className="text-sm text-gray-500 ml-2">
-                        ({attendance.shift_time})
-                      </span>
+                      <span className="text-sm text-gray-500 ml-2">({attendance.shift_time})</span>
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-base text-[#4B5563]">Giờ check-in:</span>
-                  <span className="text-base font-medium text-[#111827]">{attendance?.check_in ? new Date(attendance.check_in).toLocaleTimeString() : '--'}</span>
+                  <span className="text-base font-medium text-[#111827]">
+                    {attendance?.check_in ? new Date(attendance.check_in).toLocaleTimeString() : '--'}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Vị trí:</span>
-                  <span className="text-base font-medium text-[#111827] text-right">
-                    {attendance?.latitude && attendance?.longitude ? (
-                      <>
-                        {attendance?.location_address || `${attendance.latitude}, ${attendance.longitude}`}
-                        <div className="mt-2 h-32 w-full">
-                          <MapContainer center={[attendance.latitude, attendance.longitude]} zoom={16} style={{ height: '100%', width: '100%' }}>
-                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                            <Marker position={[attendance.latitude, attendance.longitude]} />
-                          </MapContainer>
-                        </div>
-                      </>
-                    ) : '--'}
+                <div className="flex flex-col gap-1">
+                  <span className="text-base text-[#4B5563]">Vị trí check-in:</span>
+                  <span className="text-base font-medium text-[#111827] break-words hyphens-auto leading-relaxed max-w-full">
+                    {attendance?.location_address || (attendance?.latitude && attendance?.longitude 
+                      ? `${attendance.latitude.toFixed(6)}, ${attendance.longitude.toFixed(6)}` 
+                      : '--')}
                   </span>
                 </div>
               </div>
+
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-base text-[#4B5563]">Giờ check-out:</span>
-                  <span className="text-base font-medium text-[#111827]">{attendance?.check_out ? new Date(attendance.check_out).toLocaleTimeString() : '--'}</span>
+                  <span className="text-base font-medium text-[#111827]">
+                    {attendance?.check_out ? new Date(attendance.check_out).toLocaleTimeString() : '--'}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Trạng thái:</span>                  <span className="text-base font-medium text-[#6B7280]">{attendance?.status ? attendance.status : '🔴 Chưa vào ca'}</span>
+                  <span className="text-base text-[#4B5563]">Trạng thái:</span>
+                  <span className={`text-base font-medium ${
+                    attendance?.status === 'late' ? 'text-red-600' : 
+                    attendance?.status === 'present' ? 'text-green-600' : 
+                    attendance?.status === 'on_leave' ? 'text-blue-600' : 
+                    attendance?.status === 'absent' ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {attendance?.status === 'late' ? '🔴 Trễ' :
+                     attendance?.status === 'present' ? '🟢 Đúng giờ' :
+                     attendance?.status === 'on_leave' ? '🔵 Nghỉ phép' :
+                     attendance?.status === 'absent' ? '⚫ Vắng' :
+                     '⚪ Chưa vào ca'}
+                  </span>
                 </div>
               </div>
             </div>
+
+            {/* Bản đồ - chỉ hiển thị khi đã check-in */}
+            {attendance?.latitude && attendance?.longitude && (
+              <div className="mt-6">
+                <h4 className="text-base font-medium text-[#111827] mb-3">Bản đồ vị trí check-in</h4>
+                <div className="h-64 w-full rounded-lg overflow-hidden border border-gray-200">
+                  <MapContainer 
+                    center={[attendance.latitude, attendance.longitude]} 
+                    zoom={16} 
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[attendance.latitude, attendance.longitude]} />
+                  </MapContainer>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Stats Cards */}

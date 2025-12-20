@@ -8,7 +8,8 @@ import {
   deactivateShift,
 } from '../repositories/systemSettingsRepository';
 
-const isValidTime = (value?: string) => !!value && /^\d{2}:\d{2}$/.test(value);
+// Chấp nhận định dạng HH:MM hoặc HH:MM:SS để linh hoạt hơn giữa các trình duyệt
+const isValidTime = (value?: string) => !!value && /^\d{2}:\d{2}(?::\d{2})?$/.test(value);
 
 export const getSystemSettingsController = async (_req: Request, res: Response, next: NextFunction) => {
   try {

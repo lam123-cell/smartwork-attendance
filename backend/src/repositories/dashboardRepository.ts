@@ -81,7 +81,37 @@ export const getHoursByDay = async () => {
     GROUP BY (work_date AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
     ORDER BY (work_date AT TIME ZONE 'Asia/Ho_Chi_Minh')::date ASC
   `, [startDate]);
-  return res.rows;
+  
+  // Tạo map dữ liệu từ DB theo ngày
+  const dataMap = new Map<string, { day: string; hours: number }>();
+  res.rows.forEach((row: any) => {
+    dataMap.set(row.date_val.toISOString().split('T')[0], {
+      day: row.day,
+      hours: row.hours || 0,
+    });
+  });
+  
+  // Tạo danh sách 7 ngày đầy đủ
+  const result = [];
+  const dayNames = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+  
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - (6 - i));
+    const dateStr = currentDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' });
+    const dayOfWeek = currentDate.getDay();
+    const dayName = dayNames[dayOfWeek];
+    
+    // Lấy dữ liệu từ map hoặc dùng giá trị mặc định
+    const data = dataMap.get(dateStr) || { day: dayName, hours: 0 };
+    result.push({
+      day: dayName,
+      hours: data.hours,
+      date_val: dateStr,
+    });
+  }
+  
+  return result;
 };
 
 // Lấy tỉ lệ chấm công (có mặt, đi muộn, nghỉ phép) trong 30 ngày gần đây

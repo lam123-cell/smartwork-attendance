@@ -37,7 +37,16 @@ export const getDashboard = async (req: Request, res: Response, next: NextFuncti
     const history = await getHistory(userId, historyLimit, 0);
     const stats = await computeStatsForUser(userId);
 
-    return res.json({ today: today ? { ...today } : null, history, stats });
+    // Thêm tên ca làm việc 
+    const todayWithShiftName = today
+      ? {
+          ...today,
+          shift_name: 'Ca hành chính',
+          shift_time: '08:00 - 17:00',
+        }
+      : null;
+
+    return res.json({ today: todayWithShiftName, history, stats });
   } catch (err) {
     next(err);
   }

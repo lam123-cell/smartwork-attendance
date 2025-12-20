@@ -28,8 +28,8 @@ app.use(
     credentials: true,// Cho phép gửi cookie cùng với yêu cầu
   })
 );
-app.use(express.json());// Phân tích JSON trong body của yêu cầu
-app.use(express.urlencoded({ extended: true }));// Phân tích URL-encoded data
+app.use(express.json({ limit: '50mb' }));// Phân tích JSON trong body của yêu cầu (với giới hạn 50MB)
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));// Phân tích URL-encoded data (với giới hạn 50MB)
 app.use(cookieParser(process.env.COOKIE_SECRET));// Phân tích cookie với bảo mật
 
 // Health check

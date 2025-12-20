@@ -1,7 +1,7 @@
 // src/pages/auth/Register.tsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Clock, Mail, Lock, User, Phone, Building2, ArrowLeft } from "lucide-react";
+import { Clock, Mail, User, Phone, Building2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { http } from '@/services/http';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -227,14 +229,25 @@ export default function Register() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Ít nhất 6 ký tự"
                     value={formData.password}
                     onChange={handleChange}
-                    className="h-[50px] pl-4 pr-10"
+                    className="h-[50px] pl-4 pr-12"
                     required
                   />
-                  <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -245,14 +258,25 @@ export default function Register() {
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Nhập lại mật khẩu"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="h-[50px] pl-4 pr-10"
+                    className="h-[50px] pl-4 pr-12"
                     required
                   />
-                  <Lock className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <button
+                    type="button"
+                    aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    onClick={() => setShowConfirmPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 

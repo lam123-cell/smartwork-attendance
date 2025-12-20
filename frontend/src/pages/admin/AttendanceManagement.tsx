@@ -460,80 +460,74 @@ export default function AttendanceManagement() {
         {/* Detail Modal */}
         {showDetailModal && selectedRecord && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-lg max-w-md w-full">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Chi tiết chấm công</h3>
+                <h3 className="text-xl font-bold text-gray-900">Chi tiết chấm công</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedRecord.employee_name} - {format(new Date(selectedRecord.work_date), "dd/MM/yyyy")}
+                </p>
               </div>
 
-              <div className="p-6 space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Nhân viên:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.employee_name}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Ngày:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.work_date ? format(new Date(selectedRecord.work_date), "dd/MM/yyyy") : "--"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Check-in:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.check_in
-                      ? new Date(selectedRecord.check_in).toLocaleTimeString("vi-VN")
-                      : "--"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Check-out:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.check_out
-                      ? new Date(selectedRecord.check_out).toLocaleTimeString("vi-VN")
-                      : "--"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Trạng thái:</span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      selectedRecord.status
-                    )}`}
-                  >
-                    {getStatusLabel(selectedRecord.status)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Đi muộn:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.late_minutes > 0
-                      ? `${selectedRecord.late_minutes} phút`
-                      : "0 phút"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tổng giờ:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedRecord.total_hours != null
-                      ? `${Number(selectedRecord.total_hours).toFixed(1)} giờ`
-                      : "--"}
-                  </span>
-                </div>
-                {selectedRecord.note && (
-                  <div className="pt-4 border-t border-gray-200">
-                    <span className="text-gray-600">Ghi chú:</span>
-                    <p className="mt-2 text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                      {selectedRecord.note}
+              <div className="p-6 space-y-5">
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Check-in</span>
+                    <p className="mt-1 text-base font-semibold text-gray-900">
+                      {selectedRecord.check_in
+                        ? new Date(selectedRecord.check_in).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })
+                        : "--"}
                     </p>
                   </div>
-                )}
+
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Check-out</span>
+                    <p className="mt-1 text-base font-semibold text-gray-900">
+                      {selectedRecord.check_out
+                        ? new Date(selectedRecord.check_out).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })
+                        : "--"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Trạng thái</span>
+                    <div className="mt-1">
+                      <span className={`inline-flex px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(selectedRecord.status)}`}>
+                        {getStatusLabel(selectedRecord.status)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Đi muộn</span>
+                    <p className="mt-1 text-base font-semibold text-gray-900">
+                      {selectedRecord.late_minutes > 0 ? `${selectedRecord.late_minutes} phút` : "0 phút"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Tổng giờ làm</span>
+                    <p className="mt-1 text-base font-semibold text-gray-900">
+                      {selectedRecord.total_hours != null
+                        ? `${Number(selectedRecord.total_hours).toFixed(1)} giờ`
+                        : "--"}
+                    </p>
+                  </div>
+
+                  {selectedRecord.note && (
+                    <div>
+                      <span className="text-sm font-medium text-gray-600">Ghi chú</span>
+                      <p className="mt-2 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                        {selectedRecord.note}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="p-6 border-t border-gray-200 flex justify-end">
                 <button
                   onClick={() => setShowDetailModal(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition"
+                  className="px-6 py-2.5 bg-gray-200 text-gray-900 rounded-xl hover:bg-gray-300 transition font-medium"
                 >
                   Đóng
                 </button>
@@ -544,57 +538,58 @@ export default function AttendanceManagement() {
 
         {/* Edit Modal */}
         {showEditModal && selectedRecord && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">Chỉnh sửa chấm công</h2>
-                <p className="text-sm text-gray-600 mt-1">{selectedRecord.employee_name} - {format(new Date(selectedRecord.work_date), "dd/MM/yyyy")}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedRecord.employee_name} - {format(new Date(selectedRecord.work_date), "dd/MM/yyyy")}
+                </p>
               </div>
 
-              <div className="p-6 space-y-4">
-                {/* Check-in Time */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-                  <input
-                    type="datetime-local"
-                    value={editFormData.check_in || ""}
-                    onChange={(e) => {
-                      const newCheckIn = e.target.value;
-                      const totalHours = calculateTotalHours(newCheckIn, editFormData.check_out);
-                      const lateMinutes = calculateLateMinutes(newCheckIn, editFormData.status);
-                      setEditFormData({
-                        ...editFormData,
-                        check_in: newCheckIn,
-                        total_hours: totalHours,
-                        late_minutes: lateMinutes,
-                      });
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+              <div className="p-6 space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Check-in</label>
+                    <input
+                      type="datetime-local"
+                      value={editFormData.check_in || ""}
+                      onChange={(e) => {
+                        const newCheckIn = e.target.value;
+                        const totalHours = calculateTotalHours(newCheckIn, editFormData.check_out);
+                        const lateMinutes = calculateLateMinutes(newCheckIn, editFormData.status);
+                        setEditFormData({
+                          ...editFormData,
+                          check_in: newCheckIn,
+                          total_hours: totalHours,
+                          late_minutes: lateMinutes,
+                        });
+                      }}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Check-out</label>
+                    <input
+                      type="datetime-local"
+                      value={editFormData.check_out || ""}
+                      onChange={(e) => {
+                        const newCheckOut = e.target.value;
+                        const totalHours = calculateTotalHours(editFormData.check_in, newCheckOut);
+                        setEditFormData({
+                          ...editFormData,
+                          check_out: newCheckOut,
+                          total_hours: totalHours,
+                        });
+                      }}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
                 </div>
 
-                {/* Check-out Time */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-                  <input
-                    type="datetime-local"
-                    value={editFormData.check_out || ""}
-                    onChange={(e) => {
-                      const newCheckOut = e.target.value;
-                      const totalHours = calculateTotalHours(editFormData.check_in, newCheckOut);
-                      setEditFormData({
-                        ...editFormData,
-                        check_out: newCheckOut,
-                        total_hours: totalHours,
-                      });
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Status */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái</label>
                   <select
                     value={editFormData.status || "present"}
                     onChange={(e) => {
@@ -606,7 +601,7 @@ export default function AttendanceManagement() {
                         late_minutes: lateMinutes,
                       });
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="present">Đúng giờ</option>
                     <option value="late">Đi muộn</option>
@@ -614,46 +609,39 @@ export default function AttendanceManagement() {
                   </select>
                 </div>
 
-                {/* Late Minutes */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Đi muộn (phút)</label>
-                  <input
-                    type="number"
-                    value={editFormData.late_minutes || 0}
-                    onChange={(e) =>
-                      setEditFormData({ ...editFormData, late_minutes: parseInt(e.target.value) || 0 })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    min="0"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Đi muộn (phút)</label>
+                    <input
+                      type="number"
+                      value={editFormData.late_minutes || 0}
+                      onChange={(e) => setEditFormData({ ...editFormData, late_minutes: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      min="0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Tổng giờ làm</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={editFormData.total_hours || ""}
+                      onChange={(e) => setEditFormData({ ...editFormData, total_hours: parseFloat(e.target.value) || "" })}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      min="0"
+                    />
+                  </div>
                 </div>
 
-                {/* Total Hours */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tổng giờ</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={editFormData.total_hours || 0}
-                    onChange={(e) =>
-                      setEditFormData({ ...editFormData, total_hours: parseFloat(e.target.value) || 0 })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    min="0"
-                  />
-                </div>
-
-                {/* Notes */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Ghi chú</label>
                   <textarea
                     value={editFormData.note || ""}
-                    onChange={(e) =>
-                      setEditFormData({ ...editFormData, note: e.target.value })
-                    }
+                    onChange={(e) => setEditFormData({ ...editFormData, note: e.target.value })}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập ghi chú..."
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    placeholder="Nhập ghi chú (nếu có)..."
                   />
                 </div>
               </div>
@@ -662,16 +650,17 @@ export default function AttendanceManagement() {
                 <button
                   onClick={() => setShowEditModal(false)}
                   disabled={editLoading}
-                  className="px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gray-200 text-gray-900 rounded-xl hover:bg-gray-300 transition font-medium disabled:opacity-50"
                 >
                   Hủy
                 </button>
                 <button
                   onClick={handleSaveEdit}
                   disabled={editLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium disabled:opacity-50 flex items-center gap-2"
                 >
-                  {editLoading ? "Đang lưu..." : "Lưu"}
+                  {editLoading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+                  {editLoading ? "Đang lưu..." : "Lưu thay đổi"}
                 </button>
               </div>
             </div>
