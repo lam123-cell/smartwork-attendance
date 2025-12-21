@@ -62,7 +62,7 @@ export const getHoursChart = async (req: Request, res: Response, next: NextFunct
     return res.json({
       data: data.map(row => ({
         day: row.day,
-        hours: parseFloat(row.hours) || 0,
+        hours: parseFloat(String(row.hours)) || 0,
       })),
     });
   } catch (err) {
