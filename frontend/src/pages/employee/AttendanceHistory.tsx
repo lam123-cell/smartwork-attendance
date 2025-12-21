@@ -83,14 +83,14 @@ export default function AttendanceHistory() {
 
   return (
     <EmployeeLayout title="Lịch sử chấm công" subtitle="Xem lịch sử chấm công.">
-      <div className="p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-3 md:space-y-6">
         {/* Bộ lọc*/}
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-3 md:p-4 flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 flex-wrap">
             <select 
                 value={month}
                 onChange={(e) => {
-                  const val = e.target.value; // yyyy-MM
+                  const val = e.target.value;
                   setMonth(val);
                   // set fromDate = first day of month, toDate = last day of month (or today if current month)
                   const [y, m] = val.split('-').map(Number);
@@ -100,36 +100,36 @@ export default function AttendanceHistory() {
                   setFromDate(first);
                   setToDate(last);
                 }}
-              className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
+              className="px-2 md:px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
                 {monthOptions.map(m => (
                   <option key={m.value} value={m.value}>{m.label}</option>
                 ))}
             </select>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[#4B5563]">Từ ngày:</span>
+            <div className="flex items-center gap-1 md:gap-2">
+              <span className="text-xs md:text-sm text-[#4B5563] whitespace-nowrap">Từ:</span>
               <input
                 type="date"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB]"
+                className="px-2 md:px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-[#2563EB]"
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[#4B5563]">Đến ngày:</span>
+            <div className="flex items-center gap-1 md:gap-2">
+              <span className="text-xs md:text-sm text-[#4B5563] whitespace-nowrap">Đến:</span>
               <input
                 type="date"
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB]"
+                className="px-2 md:px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-[#2563EB]"
               />
             </div>
 
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
+              className="px-2 md:px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
               <option value="all">Tất cả trạng thái</option>
               <option value="present">Đúng giờ</option>
               <option value="late">Đi muộn</option>
@@ -137,16 +137,16 @@ export default function AttendanceHistory() {
             </select>
           </div>
 
-          <div className="flex gap-3 items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[#6B7280]">Kích thước trang:</span>
-              <select value={pageSize} onChange={(e) => { setPageSize(parseInt(e.target.value, 10)); setPage(1); }} className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-sm">
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 items-start sm:items-center">
+            <div className="flex items-center gap-1 md:gap-2">
+              <span className="text-xs md:text-sm text-[#6B7280] whitespace-nowrap">Kích thước:</span>
+              <select value={pageSize} onChange={(e) => { setPageSize(parseInt(e.target.value, 10)); setPage(1); }} className="px-2 md:px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-sm">
                 <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={20}>20</option>
               </select>
             </div>
-            <button onClick={handleExportExcel} disabled={loading} className="flex items-center gap-2 px-4 py-2 border border-[#2563EB] text-[#2563EB] rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <button onClick={handleExportExcel} disabled={loading} className="flex items-center gap-2 px-3 md:px-4 py-2 border border-[#2563EB] text-[#2563EB] rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm w-full sm:w-auto justify-center sm:justify-start">
               <FileDown className="w-4 h-4" />
               <span>{loading ? 'Đang tải...' : 'Xuất Excel'}</span>
             </button>
@@ -155,96 +155,94 @@ export default function AttendanceHistory() {
 
         {/* Bảng lịch sử chấm công */}
         <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-          <div className="bg-[#F9FAFB] border-b border-[#E5E7EB] px-6 py-4">
-            <h3 className="text-lg font-semibold text-[#111827]">Lịch sử chấm công {monthOptions.find(m => m.value === month)?.label ?? `Tháng ${format(now, 'M')} / ${format(now, 'yyyy')}`}</h3>
+          <div className="bg-[#F9FAFB] border-b border-[#E5E7EB] px-3 md:px-6 py-3 md:py-4">
+            <h3 className="text-base md:text-lg font-semibold text-[#111827] truncate">Lịch sử chấm công {monthOptions.find(m => m.value === month)?.label ?? `Tháng ${format(now, 'M')} / ${format(now, 'yyyy')}`}</h3>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-[#111827]">
+            <table className="min-w-full text-xs md:text-sm text-[#111827]">
               <thead className="bg-[#F9FAFB] text-[#6B7280] uppercase text-xs font-medium">
                 <tr>
-                  <th className="px-4 py-3 text-center">Ngày</th>
-                  <th className="px-4 py-3 text-center">Ca làm</th>
-                  <th className="px-4 py-3 text-center">Giờ Check-in</th>
-                  <th className="px-4 py-3 text-center">Giờ Check-out</th>
-                  <th className="px-4 py-3 text-center">Trạng thái</th>
-                  <th className="px-4 py-3 text-center">Ghi chú</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Ngày</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Ca làm</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Check-in</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Check-out</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Trạng thái</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">Ghi chú</th>
                 </tr>
               </thead>
               <tbody>
                 {history.map((row, idx) => {
                   // Only one shift (Ca hành chính 08:00-17:00) is used in this app
                   const shiftName = 'Ca hành chính';
-                  let color = 'bg-[#DCFCE7] text-[#15803D]'; // present
+                  let color = 'bg-[#DCFCE7] text-[#15803D]';
                   if (row.status === 'late') color = 'bg-[#FEF9C3] text-[#CA8A04]';
                   if (row.status === 'absent') color = 'bg-[#FEE2E2] text-[#B91C1C]';
                   return (
                     <tr key={idx} className={idx % 2 === 1 ? "bg-[#F9FAFB]" : ""}>
-                      <td className="px-4 py-3 text-center">{row.work_date ? new Date(row.work_date).toLocaleDateString('vi-VN') : '--'}</td>
-                      <td className="px-4 py-3 text-center">{shiftName}</td>
-                      <td className="px-4 py-3 text-center">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '--'}</td> 
-                      <td className="px-4 py-3 text-center">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '--'}</td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${color}`}>
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center text-xs md:text-sm whitespace-nowrap">{row.work_date ? new Date(row.work_date).toLocaleDateString('vi-VN') : '--'}</td>
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center text-xs md:text-sm whitespace-nowrap">{shiftName}</td>
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center text-xs md:text-sm whitespace-nowrap">{row.check_in ? new Date(row.check_in).toLocaleTimeString() : '--'}</td> 
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center text-xs md:text-sm whitespace-nowrap">{row.check_out ? new Date(row.check_out).toLocaleTimeString() : '--'}</td>
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center whitespace-nowrap">
+                        <span className={`inline-block px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium ${color}`}>
                           {row.status === 'present' ? 'Đúng giờ' : row.status === 'late' ? 'Đi muộn' : 'Vắng'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-center text-[#4B5563]">{row.note || '-'}</td>
+                      <td className="px-2 md:px-4 py-2 md:py-3 text-center text-xs md:text-sm text-[#4B5563] whitespace-nowrap">{row.note || '-'}</td>
                     </tr>
                   );
                 })}
-                {history.length === 0 && !loading && <tr><td colSpan={6} className="text-center py-4">Không có dữ liệu</td></tr>}
-                {loading && history.length === 0 && <tr><td colSpan={6} className="text-center py-4">Đang tải...</td></tr>}
+                {history.length === 0 && !loading && <tr><td colSpan={6} className="text-center py-3 md:py-4 text-xs md:text-sm">Không có dữ liệu</td></tr>}
+                {loading && history.length === 0 && <tr><td colSpan={6} className="text-center py-3 md:py-4 text-xs md:text-sm">Đang tải...</td></tr>}
               </tbody>
             </table>
           </div>
         </div>
 
         {/* Pagination controls */}
-        <div className="flex items-center justify-end gap-3">
-          {/** compute total pages based on total count returned by backend */}
-          {/** total may be 0 so ensure at least 1 page show */}
+        <div className="flex items-center justify-between md:justify-end gap-2 md:gap-3 text-xs md:text-sm flex-wrap">
           {(() => {
             const totalPages = Math.max(1, Math.ceil(total / pageSize));
             return (
               <>
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={`px-3 py-1 border rounded ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>Trước</button>
-                <div className="text-sm text-[#374151]">Trang {page} / {totalPages}</div>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className={`px-3 py-1 border rounded ${page >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}>Tiếp</button>
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={`px-2 md:px-3 py-1 md:py-2 border rounded text-xs md:text-sm ${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>Trước</button>
+                <div className="text-xs md:text-sm text-[#374151] whitespace-nowrap">Trang {page} / {totalPages}</div>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className={`px-2 md:px-3 py-1 md:py-2 border rounded text-xs md:text-sm ${page >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}>Tiếp</button>
               </>
             );
           })()}
         </div>
 
         {/* Thống kê nhanh */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center">
-              <CalendarDays className="w-5 h-5 text-[#2563EB]" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-3 md:p-6 flex items-center gap-2 md:gap-4">
+            <div className="w-10 md:w-12 h-10 md:h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center flex-shrink-0">
+              <CalendarDays className="w-4 md:w-5 h-4 md:h-5 text-[#2563EB]" />
             </div>
-            <div>
-              <div className="text-lg font-bold text-[#2563EB]">{stats.totalDays}</div>
-              <div className="text-base text-[#4B5563]">Tổng số ngày làm</div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#FEFCE8] rounded-full flex items-center justify-center">
-              <Clock className="w-5 h-5 text-[#EAB308]" />
-            </div>
-            <div>
-              <div className="text-lg font-bold text-[#EAB308]">{stats.lateDays}</div>
-              <div className="text-base text-[#4B5563]">Số ngày đi muộn</div>
+            <div className="min-w-0">
+              <div className="text-lg md:text-lg font-bold text-[#2563EB]">{stats.totalDays}</div>
+              <div className="text-xs md:text-sm text-[#4B5563] truncate">Tổng số ngày làm</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#FEF2F2] rounded-full flex items-center justify-center">
-              <X className="w-5 h-5 text-[#EF4444]" />
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-3 md:p-6 flex items-center gap-2 md:gap-4">
+            <div className="w-10 md:w-12 h-10 md:h-12 bg-[#FEFCE8] rounded-full flex items-center justify-center flex-shrink-0">
+              <Clock className="w-4 md:w-5 h-4 md:h-5 text-[#EAB308]" />
             </div>
-            <div>
-              <div className="text-lg font-bold text-[#EF4444]">{stats.absentDays}</div>
-              <div className="text-base text-[#4B5563]">Số ngày vắng</div>
+            <div className="min-w-0">
+              <div className="text-lg md:text-lg font-bold text-[#EAB308]">{stats.lateDays}</div>
+              <div className="text-xs md:text-sm text-[#4B5563] truncate">Số ngày đi muộn</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-3 md:p-6 flex items-center gap-2 md:gap-4">
+            <div className="w-10 md:w-12 h-10 md:h-12 bg-[#FEF2F2] rounded-full flex items-center justify-center flex-shrink-0">
+              <X className="w-4 md:w-5 h-4 md:h-5 text-[#EF4444]" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-lg md:text-lg font-bold text-[#EF4444]">{stats.absentDays}</div>
+              <div className="text-xs md:text-sm text-[#4B5563] truncate">Số ngày vắng</div>
             </div>
           </div>
         </div>

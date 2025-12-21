@@ -287,12 +287,12 @@ export default function EmployeeManagement() {
       title="Quản lý nhân viên"
       subtitle="Trang quản lý danh sách nhân viên của công ty."
     >
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Search and Add Button */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 md:gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch gap-2 md:gap-4 flex-1 min-w-0">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 md:w-5 h-4 md:h-5" />
               <Input
                 type="text"
                 placeholder="Tìm kiếm theo tên nhân viên"
@@ -301,14 +301,14 @@ export default function EmployeeManagement() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10 h-10"
+                className="pl-10 h-10 text-sm"
               />
             </div>
             <Select value={statusFilter} onValueChange={(value: any) => {
               setStatusFilter(value);
               setCurrentPage(1);
             }}>
-              <SelectTrigger className="w-[180px] h-10">
+              <SelectTrigger className="w-full sm:w-[150px] md:w-[180px] h-10 text-sm">
                 <SelectValue placeholder="Trạng thái" />
               </SelectTrigger>
               <SelectContent>
@@ -321,7 +321,7 @@ export default function EmployeeManagement() {
               setDepartmentFilter(value);
               setCurrentPage(1);
             }}>
-              <SelectTrigger className="w-[220px] h-10">
+              <SelectTrigger className="w-full sm:w-[170px] md:w-[220px] h-10 text-sm">
                 <SelectValue placeholder="Phòng ban" />
               </SelectTrigger>
               <SelectContent>
@@ -335,54 +335,55 @@ export default function EmployeeManagement() {
             </Select>
           </div>
           <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-6"
+            className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-4 md:px-6 whitespace-nowrap flex-shrink-0 text-sm"
             onClick={() => {
               resetForm();
               setIsAddModalOpen(true);
             }}
           >
             <UserPlus className="w-4 h-4 mr-2" />
-            Thêm nhân viên
+            <span className="hidden sm:inline">Thêm nhân viên</span>
+            <span className="sm:hidden">Thêm</span>
           </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
           {/* Tổng nhân viên */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Tổng nhân viên</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 truncate">Tổng nhân viên</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="w-10 md:w-12 h-10 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Users className="w-5 md:w-6 h-5 md:h-6 text-blue-600" />
               </div>
             </div>
           </div>
 
           {/* Đang hoạt động */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Đang hoạt động</p>
-                <p className="text-3xl font-bold text-green-600">{stats.active}</p>
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 truncate">Đang hoạt động</p>
+                <p className="text-2xl md:text-3xl font-bold text-green-600">{stats.active}</p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-green-600" />
+              <div className="w-10 md:w-12 h-10 md:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-5 md:w-6 h-5 md:h-6 text-green-600" />
               </div>
             </div>
           </div>
 
           {/* Đang bị khóa */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Đang bị khóa</p>
-                <p className="text-3xl font-bold text-gray-600">{stats.locked}</p>
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 truncate">Đang bị khóa</p>
+                <p className="text-2xl md:text-3xl font-bold text-red-600">{stats.locked}</p>
               </div>
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-gray-600" />
+              <div className="w-10 md:w-12 h-10 md:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <XCircle className="w-5 md:w-6 h-5 md:h-6 text-red-600" />
               </div>
             </div>
           </div>
@@ -391,25 +392,25 @@ export default function EmployeeManagement() {
         {/* Employee Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                     Nhân viên
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden md:table-cell">
                     Email
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden lg:table-cell">
                     Phòng ban
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden lg:table-cell">
                     Vị trí
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                     Trạng thái
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">
                     Thao tác
                   </th>
                 </tr>
@@ -417,41 +418,41 @@ export default function EmployeeManagement() {
               <tbody className="bg-white divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-3 md:px-6 py-4 md:py-8 text-center text-gray-500 text-sm">
                       Đang tải...
                     </td>
                   </tr>
                 ) : employees.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-3 md:px-6 py-4 md:py-8 text-center text-gray-500 text-sm">
                       Không tìm thấy nhân viên nào
                     </td>
                   </tr>
                 ) : (
                   employees.map((employee) => (
                     <tr key={employee.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2 md:gap-3">
                           <img
                             src={employee.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.full_name)}&background=2563EB&color=fff`}
                             alt={employee.full_name}
-                            className="w-10 h-10 rounded-full object-cover"
+                            className="w-8 md:w-10 h-8 md:h-10 rounded-full object-cover"
                           />
-                          <span className="text-sm font-medium text-gray-900">{employee.full_name}</span>
+                          <span className="text-xs md:text-sm font-medium text-gray-900 truncate">{employee.full_name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">{employee.email}</span>
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden md:table-cell">
+                        <span className="text-xs md:text-sm text-gray-600 break-all">{employee.email}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">{employee.department_name || "—"}</span>
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden lg:table-cell">
+                        <span className="text-xs md:text-sm text-gray-600">{employee.department_name || "—"}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">{employee.position || "—"}</span>
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden lg:table-cell">
+                        <span className="text-xs md:text-sm text-gray-600">{employee.position || "—"}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
+                          className={`inline-flex px-2 md:px-3 py-1 text-xs font-medium rounded-full ${
                             employee.is_active
                               ? "bg-green-100 text-green-800"
                               : "bg-gray-100 text-gray-600"
@@ -460,10 +461,10 @@ export default function EmployeeManagement() {
                           {employee.is_active ? "Hoạt động" : "Bị khóa"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-7 md:h-8 w-7 md:w-8 p-0">
                               <MoreVertical className="h-4 w-4 text-gray-400" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -503,19 +504,19 @@ export default function EmployeeManagement() {
           </div>
 
           {/* Pagination */}
-          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+          <div className="px-3 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs md:text-sm">
+            <div className="text-gray-600">
               Hiển thị {employees.length > 0 ? startIndex + 1 : 0}-{endIndex} trong tổng số {totalEmployees} nhân viên
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="h-8 w-8 p-0"
+                className="h-7 md:h-8 w-7 md:w-8 p-0"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3 md:w-4 h-3 md:h-4" />
               </Button>
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                 let pageNum: number;
@@ -534,7 +535,7 @@ export default function EmployeeManagement() {
                     variant={currentPage === pageNum ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`h-8 w-8 p-0 ${
+                    className={`h-7 md:h-8 w-7 md:w-8 p-0 text-xs ${
                       currentPage === pageNum
                         ? "bg-blue-600 text-white hover:bg-blue-700"
                         : "text-gray-600 hover:bg-gray-100"
@@ -559,20 +560,20 @@ export default function EmployeeManagement() {
 
         {/* ==================== MODAL THÊM & SỬA NHÂN VIÊN ==================== */}
         <Dialog open={isAddModalOpen || isEditModalOpen} onOpenChange={isAddModalOpen ? setIsAddModalOpen : setIsEditModalOpen}>
-          <DialogContent className="max-w-3xl max-h-[95vh] overflow-hidden flex flex-col p-0">
+          <DialogContent className="w-full max-w-3xl max-h-[95vh] overflow-hidden flex flex-col p-0 mx-auto">
             {/* Header cố định */}
-            <DialogHeader className="shrink-0 border-b bg-white px-8 py-6">
-              <DialogTitle className="text-2xl font-bold">
+            <DialogHeader className="shrink-0 border-b bg-white px-4 md:px-8 py-4 md:py-6">
+              <DialogTitle className="text-lg md:text-2xl font-bold">
                 {isAddModalOpen ? "Thêm nhân viên mới" : "Chỉnh sửa nhân viên"}
               </DialogTitle>
             </DialogHeader>
 
             {/* Nội dung cuộn được */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
+            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
               {/* Avatar */}
-              <div className="flex flex-col items-center mb-8">
+              <div className="flex flex-col items-center mb-6 md:mb-8">
                 <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
-                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gray-100">
+                  <div className="w-24 md:w-32 h-24 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gray-100">
                     <img
                       src={
                         avatarUrl ||
@@ -586,7 +587,7 @@ export default function EmployeeManagement() {
                     />
                   </div>
                   <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <Camera className="w-8 h-8 text-white" />
+                    <Camera className="w-6 md:w-8 h-6 md:h-8 text-white" />
                   </div>
                 </div>
                 <input
@@ -596,30 +597,30 @@ export default function EmployeeManagement() {
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
-                <p className="mt-3 text-sm text-gray-500">Nhấp để tải lên ảnh đại diện</p>
+                <p className="mt-2 md:mt-3 text-xs md:text-sm text-gray-500">Nhấp để tải lên ảnh đại diện</p>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 {/* Thông tin cá nhân */}
                 <section>
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-5">
-                    <User className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base md:text-lg font-semibold flex items-center gap-2 mb-3 md:mb-5">
+                    <User className="w-4 md:w-5 h-4 md:h-5 text-blue-600" />
                     Thông tin cá nhân
                   </h3>
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">
+                      <label className="text-xs md:text-sm font-medium text-gray-700">
                         Họ và tên <span className="text-red-500">*</span>
                       </label>
                       <Input
                         value={formData.full_name}
                         onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                         placeholder="Nguyễn Văn A"
-                        className="h-11"
+                        className="h-9 md:h-11 text-xs md:text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">
+                      <label className="text-xs md:text-sm font-medium text-gray-700">
                         Email <span className="text-red-500">*</span>
                       </label>
                       <Input
@@ -627,59 +628,59 @@ export default function EmployeeManagement() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="nv.a@company.com"
-                        className="h-11"
+                        className="h-9 md:h-11 text-xs md:text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Số điện thoại</label>
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Số điện thoại</label>
                       <Input
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="0123456789"
-                        className="h-11"
+                        className="h-9 md:h-11 text-xs md:text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Ngày sinh</label>
-                      <Input type="date" value={formData.date_of_birth} onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })} className="h-11" />
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Ngày sinh</label>
+                      <Input type="date" value={formData.date_of_birth} onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })} className="h-9 md:h-11 text-xs md:text-sm" />
                     </div>
                   </div>
-                  <div className="mt-5 space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Địa chỉ</label>
+                  <div className="mt-3 md:mt-5 space-y-2">
+                    <label className="text-xs md:text-sm font-medium text-gray-700">Địa chỉ</label>
                     <Input
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       placeholder="123 Đường Láng, Đống Đa, Hà Nội"
-                      className="h-11"
+                      className="h-9 md:h-11 text-xs md:text-sm"
                     />
                   </div>
                 </section>
 
-                <div className="border-t pt-8" />
+                <div className="border-t pt-6 md:pt-8" />
 
                 <section>
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-5">
-                    <Briefcase className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base md:text-lg font-semibold flex items-center gap-2 mb-3 md:mb-5">
+                    <Briefcase className="w-4 md:w-5 h-4 md:h-5 text-blue-600" />
                     Thông tin công việc
                   </h3>
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Mã nhân viên</label>
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Mã nhân viên</label>
                       <Input
                         value={formData.employee_code || ""}
                         onChange={(e) => setFormData({ ...formData, employee_code: e.target.value })}
                         placeholder="NV001"
-                        className="h-11"
+                        className="h-9 md:h-11 text-xs md:text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Ngày vào làm</label>
-                      <Input type="date" value={formData.start_date || ""} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} className="h-11" />
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Ngày vào làm</label>
+                      <Input type="date" value={formData.start_date || ""} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} className="h-9 md:h-11 text-xs md:text-sm" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Phòng ban</label>
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Phòng ban</label>
                       <Select value={formData.department_id} onValueChange={(v) => setFormData({ ...formData, department_id: v })}>
-                        <SelectTrigger className="h-11">
+                        <SelectTrigger className="h-9 md:h-11 text-xs md:text-sm">
                           <SelectValue placeholder="Chọn phòng ban" />
                         </SelectTrigger>
                         <SelectContent>
@@ -692,28 +693,28 @@ export default function EmployeeManagement() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Chức vụ</label>
+                      <label className="text-xs md:text-sm font-medium text-gray-700">Chức vụ</label>
                       <Input
                         value={formData.position}
                         onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                         placeholder="Nhân viên kinh doanh"
-                        className="h-11"
+                        className="h-9 md:h-11 text-xs md:text-sm"
                       />
                     </div>
                   </div>
                 </section>
 
-                <div className="border-t pt-8" />
+                <div className="border-t pt-6 md:pt-8" />
 
                 <section>
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-5">
-                    <Shield className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base md:text-lg font-semibold flex items-center gap-2 mb-3 md:mb-5">
+                    <Shield className="w-4 md:w-5 h-4 md:h-5 text-blue-600" />
                     Phân quyền hệ thống
                   </h3>
                   <div className="max-w-md">
-                    <label className="text-sm font-medium text-gray-700">Vai trò</label>
+                    <label className="text-xs md:text-sm font-medium text-gray-700">Vai trò</label>
                     <Select value={formData.role} onValueChange={(v: "employee" | "admin") => setFormData({ ...formData, role: v })}>
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger className="h-9 md:h-11 text-xs md:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -727,13 +728,13 @@ export default function EmployeeManagement() {
             </div>
 
             {/* Footer cố định */}
-            <DialogFooter className="shrink-0 border-t bg-gray-50 px-8 py-5">
-              <Button variant="outline" onClick={() => isAddModalOpen ? setIsAddModalOpen(false) : setIsEditModalOpen(false)}>
+            <DialogFooter className="shrink-0 border-t bg-gray-50 px-4 md:px-8 py-3 md:py-5 flex flex-col sm:flex-row gap-2 md:gap-3">
+              <Button variant="outline" onClick={() => isAddModalOpen ? setIsAddModalOpen(false) : setIsEditModalOpen(false)} className="text-xs md:text-sm order-2 sm:order-1">
                 Hủy bỏ
               </Button>
               <Button
                 onClick={isAddModalOpen ? handleCreateEmployee : handleUpdateEmployee}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-8 text-xs md:text-sm order-1 sm:order-2"
               >
                 {isAddModalOpen ? "Thêm nhân viên" : "Lưu thay đổi"}
               </Button>

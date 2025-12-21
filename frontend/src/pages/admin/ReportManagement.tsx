@@ -173,8 +173,8 @@ export default function Reports() {
     >
       <div className="space-y-8">
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center gap-2 md:gap-4">
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-[282px] h-10">
                 <SelectValue placeholder="Chọn tháng" />
@@ -231,7 +231,7 @@ export default function Reports() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           <StatCard
             title="Tổng số nhân viên"
             value={`${formatNumber(stats.employeeCount)} nhân viên`}
@@ -256,7 +256,7 @@ export default function Reports() {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6">
           {/* Bar Chart */}
           <ChartCard title="Tổng giờ làm theo phòng ban">
             <ResponsiveContainer width="100%" height="100%">
@@ -311,22 +311,22 @@ export default function Reports() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Nhân viên
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Phòng ban
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Số ngày làm
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Số ngày đi muộn
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Tổng giờ
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Hiệu suất (%)
                   </th>
                 </tr>

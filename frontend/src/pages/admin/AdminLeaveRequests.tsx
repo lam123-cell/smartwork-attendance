@@ -109,15 +109,15 @@ export default function AdminLeaveRequests() {
 
   return (
     <AdminLayout title="Quản lý nghỉ phép" subtitle="Xử lý các đơn xin nghỉ phép của nhân viên">
-      <div className="p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-6">
         {/* Filter */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-          <div className="flex items-center gap-4">
-            <Filter className="w-5 h-5 text-gray-600" />
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 md:p-6">
+          <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-4">
+            <Filter className="w-4 md:w-5 h-4 md:h-5 text-gray-600 flex-shrink-0" />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs md:text-sm flex-1 sm:flex-none"
             >
               <option value="">Tất cả trạng thái</option>
               <option value="pending">Chờ duyệt</option>
@@ -129,9 +129,9 @@ export default function AdminLeaveRequests() {
 
         {/* Danh sách */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900">Danh sách đơn xin phép</h2>
-            <p className="text-sm text-gray-600 mt-1">Tổng: {filteredRequests.length} đơn</p>
+          <div className="p-3 md:p-6 border-b border-gray-100">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900">Danh sách đơn xin phép</h2>
+            <p className="text-xs md:text-sm text-gray-600 mt-1">Tổng: {filteredRequests.length} đơn</p>
           </div>
 
           {loading ? (
@@ -148,13 +148,13 @@ export default function AdminLeaveRequests() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nhân viên</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Loại phép</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Từ - Đến</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Số ngày</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Lý do</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Trạng thái</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Hành động</th>
+                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Nhân viên</th>
+                    <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Loại phép</th>
+                    <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Từ - Đến</th>
+                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Số ngày</th>
+                    <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Lý do</th>
+                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Trạng thái</th>
+                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -223,18 +223,18 @@ export default function AdminLeaveRequests() {
 
       {/* Modal từ chối */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-md mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
+          <div className="relative w-full max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 text-white">
-                <h3 className="text-2xl font-bold flex items-center gap-3">
-                  <X className="w-7 h-7" />
+              <div className="bg-gradient-to-r from-red-600 to-red-700 px-4 md:px-8 py-4 md:py-6 text-white">
+                <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:gap-3">
+                  <X className="w-5 md:w-7 h-5 md:h-7" />
                   Từ chối đơn xin phép
                 </h3>
-                <p className="text-red-100 mt-1 text-sm opacity-90">Vui lòng nhập lý do từ chối</p>
+                <p className="text-red-100 mt-1 text-xs md:text-sm opacity-90">Vui lòng nhập lý do từ chối</p>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Lý do từ chối <span className="text-red-500">*</span>
@@ -274,8 +274,8 @@ export default function AdminLeaveRequests() {
 
       {/* Modal xem lý do từ chối */}
       {showDetailModal && selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-md mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
+          <div className="relative w-full max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
               <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 text-white flex justify-between items-center">
                 <h3 className="text-2xl font-bold">Chi tiết từ chối</h3>

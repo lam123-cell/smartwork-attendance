@@ -88,7 +88,7 @@ export default function Login() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-white">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="flex flex-col items-center mb-8">
@@ -100,14 +100,14 @@ export default function Login() {
 
           {/* Form */}
           <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">
+            <h2 className="text-lg md:text-2xl font-semibold text-gray-800 text-center mb-6 md:mb-8">
               Đăng nhập hệ thống
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="email" className="text-xs md:text-sm font-medium text-gray-700">
                   Email
                 </Label>
                 <div className="relative">
@@ -125,8 +125,8 @@ export default function Login() {
               </div>
 
               {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="password" className="text-xs md:text-sm font-medium text-gray-700">
                   Mật khẩu
                 </Label>
                 <div className="relative">
@@ -164,7 +164,7 @@ export default function Login() {
                   />
                   <Label
                     htmlFor="remember"
-                    className="text-sm text-gray-600 cursor-pointer"
+                    className="text-xs md:text-sm text-gray-600 cursor-pointer"
                   >
                     Ghi nhớ tôi
                   </Label>
@@ -174,15 +174,15 @@ export default function Login() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                className="w-full h-10 md:h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm md:text-base"
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 Đăng nhập
               </Button>
             </form>
 
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
+            <div className="mt-3 md:mt-4 text-center">
+              <p className="text-xs md:text-sm text-gray-600">
                 Chưa có tài khoản?{' '}
                 <Link to="/register" className="text-blue-600 font-medium hover:underline">
                   Đăng ký

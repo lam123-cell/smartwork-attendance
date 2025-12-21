@@ -134,7 +134,7 @@ export default function Register() {
 
 
       {/* Right Panel - Register Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-white">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="flex flex-col items-center mb-8">
@@ -146,23 +146,23 @@ export default function Register() {
 
           {/* Form */}
           <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 text-center mb-2">
+            <h2 className="text-lg md:text-2xl font-semibold text-gray-800 text-center mb-1 md:mb-2">
               Tạo tài khoản mới
             </h2>
-            <p className="text-center text-sm text-gray-600 mb-8">
+            <p className="text-center text-xs md:text-sm text-gray-600 mb-4 md:mb-8">
               Điền thông tin để đăng ký tài khoản nhân viên
             </p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+              <div className="mb-4 p-2 md:p-3 bg-red-50 border border-red-200 text-red-700 text-xs md:text-sm rounded-lg">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-5">
               {/* Full Name */}
-              <div className="space-y-2">
-                <Label htmlFor="full_name">Họ và tên</Label>
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="full_name" className="text-xs md:text-sm">Họ và tên</Label>
                 <div className="relative">
                   <Input
                     id="full_name"
@@ -182,8 +182,8 @@ export default function Register() {
               </div>
 
               {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email công ty</Label>
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="email" className="text-xs md:text-sm">Email công ty</Label>
                 <div className="relative">
                   <Input
                     id="email"
@@ -203,8 +203,8 @@ export default function Register() {
               </div>
 
               {/* Phone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone">Số điện thoại (tùy chọn)</Label>
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="phone" className="text-xs md:text-sm">Số điện thoại (tùy chọn)</Label>
                 <div className="relative">
                   <Input
                     id="phone"
@@ -223,8 +223,8 @@ export default function Register() {
               </div>
 
               {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password">Mật khẩu</Label>
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="password" className="text-xs md:text-sm">Mật khẩu</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -252,8 +252,8 @@ export default function Register() {
               </div>
 
               {/* Confirm Password */}
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
+              <div className="space-y-1 md:space-y-2">
+                <Label htmlFor="confirmPassword" className="text-xs md:text-sm">Xác nhận mật khẩu</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -284,15 +284,15 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-70"
+                className="w-full h-10 md:h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-70 text-sm md:text-base"
               >
                 {loading ? 'Đang tạo tài khoản...' : 'Đăng ký ngay'}
               </Button>
             </form>
 
             {/* Login Link */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+            <div className="mt-4 md:mt-6 text-center">
+              <p className="text-xs md:text-sm text-gray-600">
                 Đã có tài khoản?{' '}
                 <Link to="/login" className="text-blue-600 font-medium hover:underline flex items-center justify-center gap-1">
                   <ArrowLeft className="w-3.5 h-3.5" />

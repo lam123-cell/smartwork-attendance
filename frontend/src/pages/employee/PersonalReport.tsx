@@ -162,21 +162,21 @@ export default function Report() {
       title="Báo cáo cá nhân"
       subtitle="Báo cáo chi tiết cá nhân."
     >
-      <div className="p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-6">
         {/* Filters and Actions */}
-        <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-4">
-            <select value={month} onChange={(e) => setMonth(e.target.value)} className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-base text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
+        <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-3 md:p-4 flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4">
+          <div className="flex gap-2 md:gap-4 w-full sm:w-auto">
+            <select value={month} onChange={(e) => setMonth(e.target.value)} className="px-3 py-2 border border-[#D1D5DB] rounded-lg text-xs md:text-base text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#2563EB] flex-1 sm:flex-none">
               {monthOptions.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
             </select>
           </div>
-          <div className="flex gap-4">
-            <button onClick={handleExport} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Download className="w-4 h-4" />
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-4 w-full sm:w-auto">
+            <button onClick={handleExport} disabled={loading} className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-[#2563EB] text-white rounded-lg hover:bg-blue-700 transition-colors text-xs md:text-sm">
+              <Download className="w-3 md:w-4 h-3 md:h-4" />
               <span>{loading ? 'Đang tải...' : 'Tải báo cáo'}</span>
             </button>
-            <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 border border-[#2563EB] text-[#2563EB] rounded-lg hover:bg-blue-50 transition-colors">
-              <Printer className="w-4 h-4" />
+            <button onClick={handlePrint} className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 border border-[#2563EB] text-[#2563EB] rounded-lg hover:bg-blue-50 transition-colors text-xs md:text-sm">
+              <Printer className="w-3 md:w-4 h-3 md:h-4" />
               <span>In báo cáo</span>
             </button>
           </div>
@@ -283,7 +283,7 @@ export default function Report() {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center">
@@ -325,32 +325,32 @@ export default function Report() {
 
         {/* Weekly Summary Table */}
         <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm overflow-hidden">
-          <div className="bg-[#F9FAFB] border-b border-[#E5E7EB] px-6 py-4">
-            <h3 className="text-lg font-semibold text-[#111827]">
+          <div className="bg-[#F9FAFB] border-b border-[#E5E7EB] px-3 md:px-6 py-3 md:py-4">
+            <h3 className="text-base md:text-lg font-semibold text-[#111827]">
               Bảng tổng hợp chi tiết tháng
             </h3>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="min-w-full">
               <thead className="bg-[#F9FAFB]">
                 <tr>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Tuần</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Tổng giờ</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Số ngày đúng giờ</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Số ngày đi muộn</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Số ngày vắng</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider">Đánh giá</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Tuần</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Tổng giờ</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Đúng giờ</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Đi muộn</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Vắng</th>
+                  <th className="px-2 md:px-4 py-2 md:py-3 text-center text-xs font-medium text-[#6B7280] uppercase tracking-wider whitespace-nowrap">Đánh giá</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-[#E5E7EB]">
                 {weekly.map((row: any, idx: number) => (
                   <tr key={idx} className={idx % 2 === 1 ? "bg-[#F9FAFB]" : ""}>
-                    <td className="px-4 py-4 text-center text-sm font-medium text-[#111827]">{row.week}</td>
-                    <td className="px-4 py-4 text-center text-sm text-[#111827]">{Math.round(row.totalHours * 10) / 10}</td>
-                    <td className="px-4 py-4 text-center text-sm text-[#111827]">{row.onTime}</td>
-                    <td className="px-4 py-4 text-center text-sm text-[#111827]">{row.late}</td>
-                    <td className="px-4 py-4 text-center text-sm text-[#111827]">{row.absent}</td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center text-xs md:text-sm font-medium text-[#111827] whitespace-nowrap">{row.week}</td>
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center text-xs md:text-sm text-[#111827] whitespace-nowrap">{Math.round(row.totalHours * 10) / 10}</td>
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center text-xs md:text-sm text-[#111827] whitespace-nowrap">{row.onTime}</td>
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center text-xs md:text-sm text-[#111827] whitespace-nowrap">{row.late}</td>
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center text-xs md:text-sm text-[#111827] whitespace-nowrap">{row.absent}</td>
+                    <td className="px-2 md:px-4 py-2 md:py-4 text-center whitespace-nowrap">
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${row.totalHours >= 40 ? 'bg-[#DCFCE7] text-[#166534]' : row.totalHours >= 36 ? 'bg-[#DBEAFE] text-[#1E40AF]' : 'bg-[#FEE2E2] text-[#991B1B]'}`}>
                         {row.totalHours >= 40 ? 'Tốt' : row.totalHours >= 36 ? 'Khá' : 'Cần cải thiện'}
                       </span>

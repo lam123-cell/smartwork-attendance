@@ -226,8 +226,8 @@ export default function AdminProfile() {
 
   return (
     <AdminLayout title="Hồ sơ quản trị viên" subtitle="Quản lý thông tin tài khoản quản trị hệ thống.">
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="p-3 md:p-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
 
           {/* CARD THÔNG TIN CHÍNH */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
@@ -360,26 +360,26 @@ export default function AdminProfile() {
         
       {/* ====================== MODAL CHỈNH SỬA THÔNG TIN ====================== */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-2xl mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
+          <div className="relative w-full max-w-2xl mx-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-white">
-                <h3 className="text-2xl font-bold flex items-center gap-3">
-                  <Edit className="w-7 h-7" />
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 md:px-8 py-4 md:py-6 text-white">
+                <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:gap-3">
+                  <Edit className="w-5 md:w-7 h-5 md:h-7" />
                   {profile?.department_name && profile?.position 
                     ? "Chỉnh sửa thông tin cá nhân" 
                     : "Hoàn thiện hồ sơ cá nhân"}
                 </h3>
-                <p className="text-blue-100 mt-1 text-sm opacity-90">
+                <p className="text-blue-100 mt-1 text-xs md:text-sm opacity-90">
                   {profile?.department_name && profile?.position 
                     ? "Bạn chỉ có thể cập nhật thông tin cá nhân" 
                     : "Vui lòng chọn phòng ban và chức vụ để hoàn tất đăng ký"}
                 </p>
               </div>
 
-              <div className="p-8 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
                   {/* Họ và tên */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -514,21 +514,21 @@ export default function AdminProfile() {
 
       {/* ====================== MODAL ĐỔI MẬT KHẨU ====================== */}
       {showChangePassword && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
+          <div className="relative w-full max-w-lg mx-auto">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
               {/* Header */}
-              <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6 text-white">
-                <h3 className="text-2xl font-bold flex items-center gap-3">
-                  <KeyRound className="w-7 h-7" />
+              <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 md:px-8 py-4 md:py-6 text-white">
+                <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:gap-3">
+                  <KeyRound className="w-5 md:w-7 h-5 md:h-7" />
                   Đổi mật khẩu
                 </h3>
-                <p className="text-emerald-100 mt-1 text-sm opacity-90">
+                <p className="text-emerald-100 mt-1 text-xs md:text-sm opacity-90">
                   Đảm bảo mật khẩu mới đủ mạnh và chưa từng sử dụng
                 </p>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6">
                 <div className="space-y-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">

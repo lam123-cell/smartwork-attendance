@@ -133,69 +133,69 @@ export default function CheckIn() {
 
   return (
     <EmployeeLayout title="Chấm công" subtitle="Trang chấm công cho nhân viên." currentTime={currentTime}>
-      <div className="flex items-center justify-center min-h-full p-6">
-        <div className="w-full max-w-4xl space-y-8">
+      <div className="flex items-center justify-center min-h-full p-4 md:p-6">
+        <div className="w-full max-w-4xl space-y-4 md:space-y-8">
           {/* Clock Display */}
-          <div className="bg-white rounded-2xl border border-[#F3F4F6] shadow-sm p-12 flex flex-col items-center gap-4">
-            <div className="text-[60px] font-bold text-[#2563EB] tracking-tight leading-none">
+          <div className="bg-white rounded-2xl border border-[#F3F4F6] shadow-sm p-6 md:p-12 flex flex-col items-center gap-2 md:gap-4">
+            <div className="text-4xl md:text-[60px] font-bold text-[#2563EB] tracking-tight leading-none">
               {currentTime}
             </div>
-            <div className="text-lg text-[#6B7280]">
+            <div className="text-sm md:text-lg text-[#6B7280] text-center">
               {formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)} 
             </div>
           </div>
 
           {/* Check-in / Check-out Button */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3 md:gap-4">
             {!attendance || !attendance.check_in ? (
               <button
                 onClick={handleCheckIn}
                 disabled={loading}
-                className={`w-40 h-40 rounded-full shadow-lg transition-shadow flex flex-col items-center justify-center gap-1 group ${loading ? 'bg-gray-300' : 'bg-[#2563EB] hover:bg-blue-700'}`}>
-                <Play className="w-[18px] h-6 text-white fill-white" />
-                <span className="text-lg font-semibold text-white">{loading ? 'Đang...' : 'Check In'}</span>
+                className={`w-24 md:w-40 h-24 md:h-40 rounded-full shadow-lg transition-shadow flex flex-col items-center justify-center gap-1 group ${loading ? 'bg-gray-300' : 'bg-[#2563EB] hover:bg-blue-700'}`}>
+                <Play className="w-3 md:w-[18px] h-4 md:h-6 text-white fill-white" />
+                <span className="text-xs md:text-lg font-semibold text-white">{loading ? 'Đang...' : 'Check In'}</span>
               </button>
             ) : attendance && !attendance.check_out ? (
               <button
                 onClick={handleCheckOut}
                 disabled={loading}
-                className={`w-40 h-40 rounded-full shadow-lg transition-shadow flex flex-col items-center justify-center gap-1 group ${loading ? 'bg-gray-300' : 'bg-[#EA580C] hover:bg-orange-600'}`}>
-                <Play className="w-[18px] h-6 text-white fill-white rotate-90" />
-                <span className="text-lg font-semibold text-white">{loading ? 'Đang...' : 'Check Out'}</span>
+                className={`w-24 md:w-40 h-24 md:h-40 rounded-full shadow-lg transition-shadow flex flex-col items-center justify-center gap-1 group ${loading ? 'bg-gray-300' : 'bg-[#EA580C] hover:bg-orange-600'}`}>
+                <Play className="w-3 md:w-[18px] h-4 md:h-6 text-white fill-white rotate-90" />
+                <span className="text-xs md:text-lg font-semibold text-white">{loading ? 'Đang...' : 'Check Out'}</span>
               </button>
             ) : (
-              <div className="w-40 h-40 rounded-full shadow-lg flex items-center justify-center bg-green-600">
-                <CheckCircle className="w-8 h-8 text-white" />
+              <div className="w-24 md:w-40 h-24 md:h-40 rounded-full shadow-lg flex items-center justify-center bg-green-600">
+                <CheckCircle className="w-6 md:w-8 h-6 md:h-8 text-white" />
               </div>
             )}
-            <p className="text-base text-[#374151]">Nhấn để {attendance && attendance.check_in ? 'kết thúc ca' : 'bắt đầu ca'}</p>
+            <p className="text-xs md:text-base text-[#374151]">Nhấn để {attendance && attendance.check_in ? 'kết thúc ca' : 'bắt đầu ca'}</p>
           </div>
 
           {/* Thông tin hôm nay */}
-          <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-            <h3 className="text-xl font-semibold text-[#111827] mb-6">Thông tin hôm nay</h3>
+          <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-semibold text-[#111827] mb-4 md:mb-6">Thông tin hôm nay</h3>
             
             {/* Các thông tin text - giữ grid 2 cột */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
+              <div className="space-y-3 md:space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Ca làm:</span>
-                  <span className="text-base font-medium text-[#111827]">
+                  <span className="text-sm md:text-base text-[#4B5563]">Ca làm:</span>
+                  <span className="text-sm md:text-base font-medium text-[#111827] text-right">
                     {attendance?.shift_name || 'Ca hành chính'}
                     {attendance?.shift_time && (
-                      <span className="text-sm text-gray-500 ml-2">({attendance.shift_time})</span>
+                      <span className="text-xs md:text-sm text-gray-500 ml-2">({attendance.shift_time})</span>
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Giờ check-in:</span>
-                  <span className="text-base font-medium text-[#111827]">
+                  <span className="text-sm md:text-base text-[#4B5563]">Giờ check-in:</span>
+                  <span className="text-sm md:text-base font-medium text-[#111827]">
                     {attendance?.check_in ? new Date(attendance.check_in).toLocaleTimeString() : '--'}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-base text-[#4B5563]">Vị trí check-in:</span>
-                  <span className="text-base font-medium text-[#111827] break-words hyphens-auto leading-relaxed max-w-full">
+                  <span className="text-sm md:text-base text-[#4B5563]">Vị trí check-in:</span>
+                  <span className="text-sm md:text-base font-medium text-[#111827] break-words hyphens-auto leading-relaxed max-w-full">
                     {attendance?.location_address || (attendance?.latitude && attendance?.longitude 
                       ? `${attendance.latitude.toFixed(6)}, ${attendance.longitude.toFixed(6)}` 
                       : '--')}
@@ -203,16 +203,16 @@ export default function CheckIn() {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Giờ check-out:</span>
-                  <span className="text-base font-medium text-[#111827]">
+                  <span className="text-sm md:text-base text-[#4B5563]">Giờ check-out:</span>
+                  <span className="text-sm md:text-base font-medium text-[#111827]">
                     {attendance?.check_out ? new Date(attendance.check_out).toLocaleTimeString() : '--'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-base text-[#4B5563]">Trạng thái:</span>
-                  <span className={`text-base font-medium ${
+                  <span className="text-sm md:text-base text-[#4B5563]">Trạng thái:</span>
+                  <span className={`text-sm md:text-base font-medium ${
                     attendance?.status === 'late' ? 'text-red-600' : 
                     attendance?.status === 'present' ? 'text-green-600' : 
                     attendance?.status === 'on_leave' ? 'text-blue-600' : 
@@ -230,9 +230,9 @@ export default function CheckIn() {
 
             {/* Bản đồ - chỉ hiển thị khi đã check-in */}
             {attendance?.latitude && attendance?.longitude && (
-              <div className="mt-6">
-                <h4 className="text-base font-medium text-[#111827] mb-3">Bản đồ vị trí check-in</h4>
-                <div className="h-64 w-full rounded-lg overflow-hidden border border-gray-200">
+              <div className="mt-4 md:mt-6">
+                <h4 className="text-sm md:text-base font-medium text-[#111827] mb-3">Bản đồ vị trí check-in</h4>
+                <div className="h-48 md:h-64 w-full rounded-lg overflow-hidden border border-gray-200">
                   <MapContainer 
                     center={[attendance.latitude, attendance.longitude]} 
                     zoom={16} 
@@ -247,42 +247,42 @@ export default function CheckIn() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
             {/* Monthly Hours */}
-            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center">
+            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-10 md:w-12 h-10 md:h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center flex-shrink-0">
                   <Clock className="w-4 h-4 text-[#2563EB]" />
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-[#111827]">{stats ? `${stats.monthlyHours}h` : '—'}</div>
-                  <div className="text-sm text-[#6B7280]">Tổng giờ tháng này</div>
+                <div className="min-w-0">
+                  <div className="text-lg md:text-2xl font-bold text-[#111827] truncate">{stats ? `${stats.monthlyHours}h` : '—'}</div>
+                  <div className="text-xs md:text-sm text-[#6B7280] truncate">Tổng giờ tháng này</div>
                 </div>
               </div>
             </div>
 
             {/* Late Days */}
-            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#FFF7ED] rounded-full flex items-center justify-center">
+            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-10 md:w-12 h-10 md:h-12 bg-[#FFF7ED] rounded-full flex items-center justify-center flex-shrink-0">
                   <AlertTriangle className="w-4 h-4 text-[#EA580C]" />
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-[#111827]">{stats ? stats.lateDays : '—'}</div>
-                  <div className="text-sm text-[#6B7280]">Số ngày đi muộn</div>
+                <div className="min-w-0">
+                  <div className="text-lg md:text-2xl font-bold text-[#111827] truncate">{stats ? stats.lateDays : '—'}</div>
+                  <div className="text-xs md:text-sm text-[#6B7280] truncate">Số ngày đi muộn</div>
                 </div>
               </div>
             </div>
 
             {/* On-time Percentage */}
-            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#F0FDF4] rounded-full flex items-center justify-center">
+            <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-10 md:w-12 h-10 md:h-12 bg-[#F0FDF4] rounded-full flex items-center justify-center flex-shrink-0">
                   <CheckCircle className="w-4 h-4 text-[#16A34A]" />
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-[#111827]">{stats ? stats.onTimeRate : '—'}</div>
-                  <div className="text-sm text-[#6B7280]">Tỷ lệ đúng giờ</div>
+                <div className="min-w-0">
+                  <div className="text-lg md:text-2xl font-bold text-[#111827] truncate">{stats ? stats.onTimeRate : '—'}</div>
+                  <div className="text-xs md:text-sm text-[#6B7280] truncate">Tỷ lệ đúng giờ</div>
                 </div>
               </div>
             </div>

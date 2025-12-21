@@ -161,11 +161,11 @@ export default function SystemSettings() {
       title="Cài đặt hệ thống"
       subtitle="Cấu hình chung cho hệ thống chấm công."
     >
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Thông tin công ty */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-4">
-          <h3 className="font-semibold text-gray-900">Thông tin công ty</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 md:p-6 space-y-3 md:space-y-4">
+          <h3 className="font-semibold text-gray-900 text-lg md:text-base">Thông tin công ty</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Tên công ty
@@ -258,9 +258,9 @@ export default function SystemSettings() {
         </div>
 
         {/* Cấu hình giờ làm việc */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-4">
-          <h3 className="font-semibold text-gray-900">Cấu hình giờ làm việc</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 md:p-6 space-y-3 md:space-y-4">
+          <h3 className="font-semibold text-gray-900 text-lg md:text-base">Cấu hình giờ làm việc</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Giờ bắt đầu làm việc
@@ -351,9 +351,9 @@ export default function SystemSettings() {
         </div>
 
         {/* Cấu hình GPS chấm công */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-4">
-          <h3 className="font-semibold text-gray-900">Cấu hình GPS chấm công</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 md:p-6 space-y-3 md:space-y-4">
+          <h3 className="font-semibold text-gray-900 text-lg md:text-base">Cấu hình GPS chấm công</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Vĩ độ công ty</label>
               <input

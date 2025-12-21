@@ -312,34 +312,34 @@ export default function AttendanceManagement() {
     >
       <div className="space-y-6">
         {/* Search and Filters */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row gap-3 items-end">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 md:p-6">
+          <div className="flex flex-col gap-2 md:gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 items-end">
               <div className="flex-1 flex items-center relative">
-                <Search className="absolute left-3 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 text-gray-400 w-3 md:w-4 h-3 md:h-4" />
                 <input
                   type="text"
                   placeholder="Tìm kiếm theo tên nhân viên"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-600" />
+              <div className="flex items-center gap-1 md:gap-2">
+                <Calendar className="w-3 md:w-4 h-3 md:h-4 text-gray-600" />
                 <input
                   type="date"
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="border border-gray-300 rounded-lg text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-lg text-xs md:text-sm px-2 md:px-3 py-2 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-gray-300 rounded-lg text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 rounded-lg text-xs md:text-sm px-2 md:px-3 py-2 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="present">Có mặt</option>
@@ -349,9 +349,9 @@ export default function AttendanceManagement() {
 
               <button
                 onClick={handleExportExcel}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                className="flex items-center justify-center gap-1 md:gap-2 bg-blue-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-blue-700 transition text-xs md:text-sm whitespace-nowrap"
               >
-                <Download className="w-4 h-4" /> Xuất Excel
+                <Download className="w-3 md:w-4 h-3 md:h-4" /> Xuất Excel
               </button>
             </div>
 
@@ -368,23 +368,23 @@ export default function AttendanceManagement() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xs md:text-sm">
               <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                 <tr>
-                  <th className="px-6 py-3 text-left">Tên nhân viên</th>
-                  <th className="px-6 py-3 text-left">Ngày</th>
-                  <th className="px-6 py-3 text-left">Giờ check-in</th>
-                  <th className="px-6 py-3 text-left">Giờ check-out</th>
-                  <th className="px-6 py-3 text-left">Trạng thái</th>
-                  <th className="px-6 py-3 text-left">Muộn (phút)</th>
-                  <th className="px-6 py-3 text-left">Tổng giờ</th>
-                  <th className="px-6 py-3 text-center">Hành động</th>
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Tên nhân viên</th>
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Ngày</th>
+                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Giờ check-in</th>
+                  <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Giờ check-out</th>
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Trạng thái</th>
+                  <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Muộn (phút)</th>
+                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Tổng giờ</th>
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center">Hành động</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center">
+                    <td colSpan={8} className="px-2 md:px-4 lg:px-6 py-4 md:py-8 text-center">
                       <div className="text-gray-500">Đang tải...</div>
                     </td>
                   </tr>
@@ -459,9 +459,9 @@ export default function AttendanceManagement() {
 
         {/* Detail Modal */}
         {showDetailModal && selectedRecord && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+              <div className="p-3 md:p-6 border-b border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900">Chi tiết chấm công</h3>
                 <p className="text-sm text-gray-600 mt-1">
                   {selectedRecord.employee_name} - {format(new Date(selectedRecord.work_date), "dd/MM/yyyy")}
@@ -538,9 +538,9 @@ export default function AttendanceManagement() {
 
         {/* Edit Modal */}
         {showEditModal && selectedRecord && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
+              <div className="p-3 md:p-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">Chỉnh sửa chấm công</h2>
                 <p className="text-sm text-gray-600 mt-1">
                   {selectedRecord.employee_name} - {format(new Date(selectedRecord.work_date), "dd/MM/yyyy")}

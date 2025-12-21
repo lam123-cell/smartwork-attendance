@@ -99,9 +99,9 @@ export default function Dashboard() {
           <div className="text-gray-600">Đang tải dữ liệu...</div>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             <StatCard
               title="Tổng số nhân viên"
               value={String(stats.totalEmployees)}
@@ -133,7 +133,7 @@ export default function Dashboard() {
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             {/* Bar Chart */}
             <ChartCard title="Giờ làm trung bình theo ngày">
               <ResponsiveContainer width="100%" height="100%">
@@ -174,24 +174,24 @@ export default function Dashboard() {
 
           {/* Recent Activity Table */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Hoạt động gần đây</h3>
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">Hoạt động gần đây</h3>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Tên nhân viên
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                       Phòng ban
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Giờ check-in
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Trạng thái
                     </th>
                   </tr>
@@ -199,25 +199,25 @@ export default function Dashboard() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recentActivity.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={4} className="px-3 md:px-6 py-8 text-center text-gray-500">
                         Chưa có dữ liệu
                       </td>
                     </tr>
                   ) : (
                     recentActivity.map((activity) => (
                       <tr key={activity.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {activity.name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                           {activity.department}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           {activity.time}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                            className={`inline-flex px-2 md:px-3 py-1 text-xs font-semibold rounded-full ${
                               activity.status === "on-time"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
