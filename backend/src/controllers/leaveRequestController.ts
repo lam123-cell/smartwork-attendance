@@ -34,7 +34,9 @@ export const submitLeaveRequest = async (req: Request, res: Response, next: Next
       'LEAVE_REQUEST_SUBMITTED',
       `Tạo đơn xin phép từ ${startDate} đến ${endDate}`,
       'leave_requests',
-      leaveRequest.id
+      leaveRequest.id,
+      req.ip,
+      req.get('user-agent')
     );
 
     res.status(201).json({ message: 'Gửi đơn xin phép thành công', leaveRequest });
@@ -111,7 +113,9 @@ export const approveLeave = async (req: Request, res: Response, next: NextFuncti
       'LEAVE_REQUEST_APPROVED',
       `Duyệt đơn xin phép của nhân viên ${leaveReq.full_name} từ ${leaveReq.start_date} đến ${leaveReq.end_date}`,
       'leave_requests',
-      id
+      id,
+      req.ip,
+      req.get('user-agent')
     );
 
     res.json({ message: 'Duyệt đơn thành công', leaveRequest: updated });
@@ -151,7 +155,9 @@ export const rejectLeave = async (req: Request, res: Response, next: NextFunctio
       'LEAVE_REQUEST_REJECTED',
       `Từ chối đơn xin phép của nhân viên ${leaveReq.full_name}. Lý do: ${rejectedReason}`,
       'leave_requests',
-      id
+      id,
+      req.ip,
+      req.get('user-agent')
     );
 
     res.json({ message: 'Từ chối đơn thành công', leaveRequest: updated });

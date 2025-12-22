@@ -274,7 +274,7 @@ export default function EmployeeProfile() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={`font-medium text-[#111827] text-xs md:text-sm truncate`}>{it.description || it.action || it.action_type}</p>
-                    <p className="text-xs md:text-sm text-gray-500 mt-0.5">{new Date(it.created_at).toLocaleString('vi-VN')}</p>
+                    <p className="text-xs md:text-sm text-gray-500 mt-0.5">{new Date(it.created_at).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</p>
                   </div>
                 </div>
               ))}

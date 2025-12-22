@@ -232,7 +232,7 @@ export default function CheckIn() {
             {attendance?.latitude && attendance?.longitude && (
               <div className="mt-4 md:mt-6">
                 <h4 className="text-sm md:text-base font-medium text-[#111827] mb-3">Bản đồ vị trí check-in</h4>
-                <div className="h-48 md:h-64 w-full rounded-lg overflow-hidden border border-gray-200">
+                <div className="h-48 md:h-64 w-full rounded-lg overflow-hidden border border-gray-200 relative z-0">
                   <MapContainer 
                     center={[attendance.latitude, attendance.longitude]} 
                     zoom={16} 

@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function Report() {
   const now = new Date();
   const defaultMonth = format(now, 'yyyy-MM');
+  const currentMonthValue = format(now, 'yyyy-MM');
   const [month, setMonth] = useState(defaultMonth);
   const [monthOptions] = useState(() => Array.from({ length: 6 }).map((_, i) => {
     const d = subMonths(now, i);
@@ -20,6 +21,8 @@ export default function Report() {
   const [summary, setSummary] = useState<any>(null);
   const [weekly, setWeekly] = useState<any[]>([]);
   const { toast } = useToast();
+
+  const isCurrentMonth = month === currentMonthValue;
 
   // Derived values for charts
   const workedDays = days.filter(d => (d.hours || 0) > 0).length;
@@ -189,7 +192,11 @@ export default function Report() {
             <h3 className="text-lg font-semibold text-[#111827] mb-4">
               Tỷ lệ chấm công tháng {month ? format(new Date(month + '-01'), 'M/yyyy') : ''}
             </h3>
-            {summary ? (
+            {isCurrentMonth ? (
+              <div className="h-64 flex items-center justify-center text-center text-[#6B7280] px-4">
+                Dữ liệu tổng hợp sẽ hiển thị khi kết thúc tháng. Bạn có thể xem biểu đồ giờ làm mỗi ngày bên dưới.
+              </div>
+            ) : summary ? (
               <div className="flex flex-col items-center">
                 <ResponsiveContainer width="100%" height={240}>
                   <PieChart>
@@ -283,51 +290,55 @@ export default function Report() {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-          <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center">
-                <Clock className="w-5 h-5 text-[#2563EB]" />
+        {!isCurrentMonth && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+              <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-[#EFF6FF] rounded-full flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-[#2563EB]">{summary ? `${summary.totalHours} giờ` : '—'}</div>
+                    <div className="text-base text-[#4B5563]">Tổng giờ làm</div>
+                    <div className="text-sm text-[#6B7280]">Trung bình {summary ? `${summary.avgHours}h` : '—'}/ngày</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="text-lg font-bold text-[#2563EB]">{summary ? `${summary.totalHours} giờ` : '—'}</div>
-                <div className="text-base text-[#4B5563]">Tổng giờ làm</div>
-                <div className="text-sm text-[#6B7280]">Trung bình {summary ? `${summary.avgHours}h` : '—'}/ngày</div>
+
+              <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-[#FEFCE8] rounded-full flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-[#EAB308]" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-[#EAB308]">{summary ? `${summary.lateDays} ngày` : '—'}</div>
+                    <div className="text-base text-[#4B5563]">Số ngày đi muộn</div>
+                    <div className="text-sm text-[#6B7280]">{summary ? `${summary.onTimeRate}% đúng giờ` : '—'}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-[#FEF2F2] rounded-full flex items-center justify-center">
+                    <X className="w-[15px] h-5 text-[#EF4444]" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-[#EF4444]">{summary ? `${summary.absentDays} ngày` : '—'}</div>
+                    <div className="text-base text-[#4B5563]">Số ngày vắng</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </>
+        )}
 
-          <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#FEFCE8] rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-[#EAB308]" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-[#EAB308]">{summary ? `${summary.lateDays} ngày` : '—'}</div>
-                <div className="text-base text-[#4B5563]">Số ngày đi muộn</div>
-                <div className="text-sm text-[#6B7280]">{summary ? `${summary.onTimeRate}% đúng giờ` : '—'}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#FEF2F2] rounded-full flex items-center justify-center">
-                <X className="w-[15px] h-5 text-[#EF4444]" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-[#EF4444]">{summary ? `${summary.absentDays} ngày` : '—'}</div>
-                <div className="text-base text-[#4B5563]">Số ngày vắng</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Weekly Summary Table */}
+        {/* Weekly Summary Table - Always visible */}
         <div className="bg-white rounded-xl border border-[#F3F4F6] shadow-sm overflow-hidden">
           <div className="bg-[#F9FAFB] border-b border-[#E5E7EB] px-3 md:px-6 py-3 md:py-4">
             <h3 className="text-base md:text-lg font-semibold text-[#111827]">
-              Bảng tổng hợp chi tiết tháng
+              Bảng tổng hợp {isCurrentMonth ? 'tuần (cập nhật theo tuần)' : 'chi tiết tháng'}
             </h3>
           </div>
           <div className="overflow-x-auto">

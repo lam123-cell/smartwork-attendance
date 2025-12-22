@@ -29,7 +29,8 @@ const parseTimeToMinutes = (timeStr: string) => {
 export const checkIn = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req as any).user.id as string;
   let { latitude, longitude, accuracy, address, note } = req.body as any;
-  // Kiểm tra giờ check-in (thêm mới)
+  
+  // Kiểm tra giờ check-in TRƯỚC (9:30 sáng)
   if (!isCheckInAllowed()) {
     return res.status(400).json({ 
       message: 'Quá giờ check-in cho phép (9:30 sáng). Vui lòng liên hệ quản lý.' 
@@ -39,7 +40,7 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
   // Luôn gán ca hành chính 
   const shift_id = FIXED_SHIFT_ID;
 
-  // Lấy cấu hình GPS để xác thực vị trí
+  // Kiểm tra vị trí GPS SAU
   const settings = await getSettings();
   const requireGps = settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
   if (requireGps) {

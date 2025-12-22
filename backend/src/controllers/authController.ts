@@ -69,6 +69,11 @@ export const login = async (req: Request, res: Response) => {
   // Kiểm tra xem người dùng có tồn tại không
   if (!user) return res.status(401).json({ message: 'Sai email hoặc mật khẩu' });
 
+  // Từ chối đăng nhập nếu tài khoản đã bị khóa
+  if (user.is_active === false) {
+    return res.status(403).json({ message: 'Tài khoản của bạn đã bị khóa hãy liên hệ quản trị viên' });
+  }
+
   if (!user.password) return res.status(401).json({ message: 'Tài khoản không có mật khẩu' });
 
   // So sánh mật khẩu

@@ -71,7 +71,7 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
     <div className="flex h-screen bg-[#F9FAFB]">
       {/* Sidebar */}
       <div
-        className={`fixed md:sticky md:top-0 w-60 h-screen bg-[#F9FAFB] border-r border-[#E5E7EB] flex flex-col transition-all duration-300 z-40 ${
+        className={`fixed md:sticky md:top-0 w-60 h-screen bg-[#F9FAFB] border-r border-[#E5E7EB] flex flex-col transition-all duration-300 z-[1200] ${
           isMobile && !isSidebarOpen ? "-translate-x-full" : "translate-x-0"
         }`}
       >
@@ -134,7 +134,7 @@ export default function EmployeeLayout({ children, title, showUser = true, curre
       {/* Overlay for mobile */}
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[1100] md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
