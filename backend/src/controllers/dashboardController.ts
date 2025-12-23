@@ -111,17 +111,20 @@ export const getRecentActivityData = async (req: Request, res: Response, next: N
     const limit = parseInt(String(req.query.limit ?? '10'), 10);
     const activities = await getRecentActivity(limit);
 
+    // Helper format giờ Việt Nam
+    const formatVietnamTime = (dateStr: string | null): string => {
+      if (!dateStr) return '--';
+      const date = new Date(dateStr);
+      const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+      return vnDate.toISOString().slice(11, 16); // HH:mm
+    };
+
     return res.json({
       data: activities.map(activity => ({
         id: activity.id,
         name: activity.employee_name,
         department: activity.department || 'N/A',
-        time: activity.check_in
-          ? new Date(activity.check_in).toLocaleTimeString('vi-VN', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : '--',
+        time: formatVietnamTime(activity.check_in),
         status: activity.status === 'late' ? 'late' : 'on-time',
         workDate: activity.work_date,
       })),

@@ -5,7 +5,18 @@ import ExcelJS from 'exceljs';
 // Helper format ngày 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('vi-VN'); // 01/12/2025
+  const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  const day = String(vnDate.getUTCDate()).padStart(2, '0');
+  const month = String(vnDate.getUTCMonth() + 1).padStart(2, '0');
+  const year = vnDate.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Helper format giờ Việt Nam (HH:mm)
+function formatVietnamTimeShort(dateStr: string): string {
+  const date = new Date(dateStr);
+  const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  return vnDate.toISOString().slice(11, 16); // HH:mm
 }
 
 // Lấy tất cả bản ghi chấm công (admin)
@@ -137,8 +148,8 @@ export const exportAllAttendanceExcel = async (req: Request, res: Response, next
         idx + 1,
         row.employee_name,
         formatDate(row.work_date),
-        row.check_in ? new Date(row.check_in).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
-        row.check_out ? new Date(row.check_out).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
+        row.check_in ? formatVietnamTimeShort(row.check_in) : '--',
+        row.check_out ? formatVietnamTimeShort(row.check_out) : '--',
         row.total_hours ? Number(row.total_hours).toFixed(1) : '--',
         statusText,
         row.late_minutes > 0 ? row.late_minutes : '',

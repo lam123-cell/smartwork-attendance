@@ -32,6 +32,23 @@ const toVietnamTime = (date: Date = new Date()): string => {
   return vnDate.toISOString().slice(11, 19); // HH:mm:ss
 };
 
+// Hàm format giờ Việt Nam (HH:mm)
+const formatVietnamTimeShort = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  return vnDate.toISOString().slice(11, 16); // HH:mm
+};
+
+// Hàm format ngày Việt Nam
+const formatVietnamDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  const day = String(vnDate.getUTCDate()).padStart(2, '0');
+  const month = String(vnDate.getUTCMonth() + 1).padStart(2, '0');
+  const year = vnDate.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export const checkIn = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req as any).user.id as string;
   let { latitude, longitude, accuracy, address, note } = req.body as any;
@@ -457,10 +474,10 @@ export const exportHistoryExcel = async (req: Request, res: Response, next: Next
       const statusText = row.status === 'late' ? 'Đi muộn' : row.status === 'present' ? 'Đúng giờ' : 'Vắng';
 
       sheet.addRow([
-        formatDate(row.work_date), // Ngày dạng dd/mm/yyyy
+        formatVietnamDate(row.work_date), // Ngày dạng dd/mm/yyyy
         shiftName,
-        row.check_in ? new Date(row.check_in).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
-        row.check_out ? new Date(row.check_out).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '--',
+        row.check_in ? formatVietnamTimeShort(row.check_in) : '--',
+        row.check_out ? formatVietnamTimeShort(row.check_out) : '--',
         row.total_hours ? Number(row.total_hours).toFixed(1) : '--',
         statusText,
         row.late_minutes > 0 ? row.late_minutes : '',
@@ -527,8 +544,7 @@ export const exportHistoryExcel = async (req: Request, res: Response, next: Next
 
 // Helper format ngày đẹp
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('vi-VN'); // 01/12/2025
+  return formatVietnamDate(dateStr); // 01/12/2025 - Using new Vietnam-aware function
 }
 
 

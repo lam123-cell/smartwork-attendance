@@ -45,10 +45,13 @@ export const runAutoCheckout = async () => {
         WHERE id = $3
       `, [autoTimeForDb, hours, row.id]);
 
+      // Helper format giờ Việt Nam
+      const autoTimeVnFormatted = autoTimeVn.toISOString().slice(11, 16); // HH:mm
+
       await logActivity(
         row.user_id,
         'ATTENDANCE_AUTO_CHECKOUT',
-        `Tự động check-out lúc ${autoTimeVn.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} - Tổng ${hours} giờ`,
+        `Tự động check-out lúc ${autoTimeVnFormatted} - Tổng ${hours} giờ`,
         'attendance',
         row.id
       );

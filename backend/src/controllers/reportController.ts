@@ -151,7 +151,16 @@ export const exportPersonalReport = async (req: Request, res: Response, next: Ne
     });
     // Data rows
     days.forEach(d => {
-      const displayDate = new Date(d.date).toLocaleDateString('vi-VN');
+      // Helper format ngày Việt Nam
+      const formatVietnamDate = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+        const day = String(vnDate.getUTCDate()).padStart(2, '0');
+        const month = String(vnDate.getUTCMonth() + 1).padStart(2, '0');
+        const year = vnDate.getUTCFullYear();
+        return `${day}/${month}/${year}`;
+      };
+      const displayDate = formatVietnamDate(d.date);
       const statusText = d.status === 'late' ? 'Đi muộn' : d.status === 'present' ? 'Đúng giờ' : 'Vắng';
       sheet.addRow([displayDate, d.hours ? Number(d.hours).toFixed(1) : '', statusText, d.late_minutes || '', d.note || '']);
     });
