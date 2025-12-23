@@ -13,8 +13,8 @@ const isCheckInAllowed = () => {
   const now = new Date();
   const vnHour = (now.getUTCHours() + 7) % 24; // Giờ Việt Nam (UTC+7)
   const vnMinute = now.getUTCMinutes();
-  if (vnHour > 9) return false;
-  if (vnHour === 9 && vnMinute > 30) return false;
+  if (vnHour > 21) return false;
+  if (vnHour === 21 && vnMinute > 30) return false;
   return true;
 };
 
