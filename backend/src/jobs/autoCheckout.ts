@@ -7,7 +7,7 @@ export const runAutoCheckout = async () => {
   const todayVn = nowVn.toISOString().slice(0, 10); // '2025-12-03'
 
   // Tạo đúng 17:00:00 hôm nay theo giờ Việt Nam
-  const autoTimeVn = new Date(`${todayVn}T19:30:00+07:00`);
+  const autoTimeVn = new Date(`${todayVn}T19:40:00+07:00`);
 
   // Chuyển về UTC để lưu vào DB (nếu cột là timestamptz)
   const autoTimeForDb = autoTimeVn.toISOString();
@@ -46,7 +46,7 @@ export const runAutoCheckout = async () => {
       `, [autoTimeForDb, hours, row.id]);
 
       // Helper format giờ Việt Nam
-      const autoTimeVnFormatted = autoTimeVn.toISOString().slice(11, 16); // HH:mm
+      const autoTimeVnFormatted = autoTimeVn.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit', hour12: false }); // HH:mm
 
       await logActivity(
         row.user_id,
@@ -80,6 +80,9 @@ export const runAutoCheckout = async () => {
     const dayOfWeek = nowVn.getDay(); // 0 = Chủ nhật, 1-6 = Thứ 2-7
     const isSunday = dayOfWeek === 0;
 
+    // Format ngày thành DD-MM-YYYY
+    const todayVnFormatted = `${todayVn.slice(8, 10)}-${todayVn.slice(5, 7)}-${todayVn.slice(0, 4)}`;
+
     let insertedCount = 0;
 
     for (const emp of allEmployees.rows) {
@@ -96,7 +99,7 @@ export const runAutoCheckout = async () => {
         await logActivity(
           emp.id,
           'ATTENDANCE_AUTO_MARK',
-          `Tự động đánh dấu ${status === 'absent' ? 'vắng mặt' : 'nghỉ cuối tuần'} ngày ${todayVn}`,
+          `Tự động đánh dấu ${status === 'absent' ? 'vắng mặt' : 'nghỉ cuối tuần'} ngày ${todayVnFormatted}`,
           'attendance',
           undefined
         );
