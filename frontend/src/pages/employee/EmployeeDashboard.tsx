@@ -78,7 +78,11 @@ export default function EmployeeDashboard() {
   const checkInTime = today?.check_in ? new Date(today.check_in).toLocaleTimeString() : '--';
   const checkOutTime = today?.check_out ? new Date(today.check_out).toLocaleTimeString() : '--';
   const totalHoursToday = today?.total_hours ? `${today.total_hours}h` : '--';
-  const statusText = today ? (today.status === 'late' ? 'Đi muộn' : 'Đúng giờ') : 'Chưa check-in';
+  const statusText = today ? (
+    today.status === 'absent' ? 'Vắng mặt' :
+    today.status === 'on_leave' ? 'Nghỉ phép' :
+    today.status === 'late' ? 'Đi muộn' : 'Đúng giờ'
+  ) : 'Chưa check-in';
 
   return (
     <EmployeeLayout title="Bảng điều khiển cá nhân" subtitle="Tổng quan cá nhân.">

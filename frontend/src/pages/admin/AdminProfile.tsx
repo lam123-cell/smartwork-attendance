@@ -239,7 +239,7 @@ export default function AdminProfile() {
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <img
-                    src={profile?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80"}
+                    src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.full_name || 'Admin')}&background=2563EB&color=fff`}
                     alt="Admin"
                     className="w-40 h-40 rounded-full object-cover border-8 border-white shadow-2xl"
                   />

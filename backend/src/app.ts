@@ -52,7 +52,7 @@ app.use(`${apiPrefix}/settings`, systemSettingsRoutes);
 app.use(`${apiPrefix}/leave-requests`, leaveRequestRoutes);
 
 // Auto checkout đúng 17:00:00 giờ Việt Nam – dù server ở đâu cũng đúng!
-cron.schedule('40 19 * * *', async () => {
+cron.schedule('0 17 * * *', async () => {
   const nowVn = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
   console.log(`Bắt đầu Auto Checkout - Hiện tại: ${nowVn}`);
  

@@ -7,7 +7,7 @@ export const runAutoCheckout = async () => {
   const todayVn = nowVn.toISOString().slice(0, 10); // '2025-12-03'
 
   // Tạo đúng 17:00:00 hôm nay theo giờ Việt Nam
-  const autoTimeVn = new Date(`${todayVn}T19:40:00+07:00`);
+  const autoTimeVn = new Date(`${todayVn}T17:00:00+07:00`);
 
   // Chuyển về UTC để lưu vào DB (nếu cột là timestamptz)
   const autoTimeForDb = autoTimeVn.toISOString();
@@ -46,7 +46,7 @@ export const runAutoCheckout = async () => {
       `, [autoTimeForDb, hours, row.id]);
 
       // Helper format giờ Việt Nam
-      const autoTimeVnFormatted = autoTimeVn.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit', hour12: false }); // HH:mm
+      const autoTimeVnFormatted = autoTimeVn.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); // HH:mm:ss
 
       await logActivity(
         row.user_id,

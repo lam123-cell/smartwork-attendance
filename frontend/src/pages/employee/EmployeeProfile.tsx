@@ -184,7 +184,7 @@ export default function EmployeeProfile() {
             {/* Avatar */}
             <div className="relative">
               <img
-                src={profile?.avatar_url || 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?auto=format&fit=crop&w=400&q=80'}
+                src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.full_name || 'Employee')}&background=2563EB&color=fff`}
                 alt="Employee Avatar"
                 className="w-32 md:w-48 h-32 md:h-48 rounded-full object-cover border-4 border-[#2563EB]"
               />
@@ -266,8 +266,8 @@ export default function EmployeeProfile() {
           <div className="p-3 md:p-6 bg-white rounded-xl shadow-md">
             <h4 className="font-semibold mb-2 md:mb-4 text-sm md:text-base">Hoạt động gần đây</h4>
             <div className="grid gap-2 md:gap-3">
-              {activities.length === 0 && <div className="text-xs md:text-sm text-[#9CA3AF]">Không có hoạt động</div>}
-              {activities.map((it, idx) => (
+              {activities.filter(it => it.action_type !== 'ATTENDANCE_AUTO_MARK' && it.action_type !== 'ATTENDANCE_AUTO_CHECKOUT').length === 0 && <div className="text-xs md:text-sm text-[#9CA3AF]">Không có hoạt động</div>}
+              {activities.filter(it => it.action_type !== 'ATTENDANCE_AUTO_MARK' && it.action_type !== 'ATTENDANCE_AUTO_CHECKOUT').map((it, idx) => (
                 <div key={it.id ?? idx} className={`flex items-start md:items-center gap-2 md:gap-4 p-2 md:p-4 rounded-lg bg-white border`}>
                   <div className="flex-shrink-0 mt-1 md:mt-0">
                     <CheckCircle2 size={16} className="text-[#15803D] md:size-18" />
