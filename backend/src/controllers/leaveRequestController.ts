@@ -29,10 +29,12 @@ export const submitLeaveRequest = async (req: Request, res: Response, next: Next
 
     const leaveRequest = await createLeaveRequest(userId, startDate, endDate, leaveTypeId, reason || '');
 
+    const formattedStartDate = new Date(startDate).toLocaleDateString('vi-VN');
+    const formattedEndDate = new Date(endDate).toLocaleDateString('vi-VN');
     await logActivity(
       userId,
       'LEAVE_REQUEST_SUBMITTED',
-      `Tạo đơn xin phép từ ${startDate} đến ${endDate}`,
+      `Tạo đơn xin phép từ ${formattedStartDate} đến ${formattedEndDate}`,
       'leave_requests',
       leaveRequest.id,
       req.ip,
@@ -108,10 +110,12 @@ export const approveLeave = async (req: Request, res: Response, next: NextFuncti
     await client.query('COMMIT');
 
     // Ghi log
+    const formattedStartDate = new Date(leaveReq.start_date).toLocaleDateString('vi-VN');
+    const formattedEndDate = new Date(leaveReq.end_date).toLocaleDateString('vi-VN');
     await logActivity(
       adminId,
       'LEAVE_REQUEST_APPROVED',
-      `Duyệt đơn xin phép của nhân viên ${leaveReq.full_name} từ ${leaveReq.start_date} đến ${leaveReq.end_date}`,
+      `Duyệt đơn xin phép của nhân viên ${leaveReq.full_name} từ ${formattedStartDate} đến ${formattedEndDate}`,
       'leave_requests',
       id,
       req.ip,

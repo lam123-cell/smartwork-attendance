@@ -145,40 +145,42 @@ export default function AdminLeaveRequests() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-max">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Nhân viên</th>
-                    <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Loại phép</th>
-                    <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Từ - Đến</th>
-                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Số ngày</th>
-                    <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Lý do</th>
-                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Trạng thái</th>
-                    <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-900">Hành động</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-left text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Nhân viên</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-left text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Loại phép</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-left text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Từ - Đến</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-center text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Số ngày</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-left text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Lý do</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-center text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Trạng thái</th>
+                    <th className="px-3 md:px-4 lg:px-6 py-3 text-center text-xs md:text-sm font-semibold text-gray-900 whitespace-nowrap">Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRequests.map((req) => (
                     <tr key={req.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-4 lg:px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">{req.full_name}</div>
                         <div className="text-xs text-gray-600">{req.employee_code}</div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{req.leave_type_name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-sm text-gray-700 whitespace-nowrap">{req.leave_type_name}</td>
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                         {new Date(req.start_date).toLocaleDateString('vi-VN')} -{' '}
                         {new Date(req.end_date).toLocaleDateString('vi-VN')}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-blue-600">
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-sm font-semibold text-blue-600 text-center whitespace-nowrap">
                         {calculateDays(req.start_date, req.end_date)} ngày
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">
-                        {req.reason || '-'}
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-sm text-gray-700 max-w-xs">
+                        <div className="truncate" title={req.reason || '-'}>
+                          {req.reason || '-'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4">{getStatusBadge(req.status)}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-center whitespace-nowrap">{getStatusBadge(req.status)}</td>
+                      <td className="px-3 md:px-4 lg:px-6 py-4 text-center whitespace-nowrap">
                         {req.status === 'pending' ? (
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center gap-2">
                             <button
                               onClick={() => handleApprove(req.id)}
                               className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
@@ -203,7 +205,7 @@ export default function AdminLeaveRequests() {
                               setSelectedRequest(req);
                               setShowDetailModal(true);
                             }}
-                            className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition text-sm font-medium flex items-center gap-2"
+                            className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition text-xs font-medium inline-flex items-center gap-1.5 whitespace-nowrap"
                           >
                             <Eye className="w-4 h-4" />
                             Xem lý do

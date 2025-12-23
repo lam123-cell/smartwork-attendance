@@ -26,6 +26,12 @@ const parseTimeToMinutes = (timeStr: string) => {
   return (parts[0] || 0) * 60 + (parts[1] || 0);
 };
 
+// Hàm chuyển đổi thời gian sang giờ Việt Nam (UTC+7)
+const toVietnamTime = (date: Date = new Date()): string => {
+  const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+  return vnDate.toISOString().slice(11, 19); // HH:mm:ss
+};
+
 export const checkIn = async (req: Request, res: Response, next: NextFunction) => {
   const userId = (req as any).user.id as string;
   let { latitude, longitude, accuracy, address, note } = req.body as any;
@@ -105,7 +111,7 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
         await logActivity(
           userId,
           'ATTENDANCE_CHECKIN',
-          `Check-in lúc ${new Date().toLocaleTimeString('vi-VN')} ${lateMinutes > 0 ? `(muộn ${lateMinutes} phút)` : ''}`,
+          `Check-in lúc ${toVietnamTime()} ${lateMinutes > 0 ? `(muộn ${lateMinutes} phút)` : ''}`,
           'attendance',
           updated?.id ?? row.id,
           req.ip,
@@ -149,7 +155,7 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
       await logActivity(
         userId,
         'ATTENDANCE_CHECKIN',
-        `Check-in lúc ${new Date().toLocaleTimeString('vi-VN')} ${lateMinutes > 0 ? `(muộn ${lateMinutes} phút)` : ''}`,
+        `Check-in lúc ${toVietnamTime()} ${lateMinutes > 0 ? `(muộn ${lateMinutes} phút)` : ''}`,
         'attendance',
         created?.id,
         req.ip,
@@ -228,7 +234,7 @@ export const checkOut = async (req: Request, res: Response, next: NextFunction) 
       await logActivity(
         userId,
         'ATTENDANCE_CHECKOUT',
-        `Check-out lúc ${new Date().toLocaleTimeString('vi-VN')} - Tổng ${hours} giờ`,
+        `Check-out lúc ${toVietnamTime()} - Tổng ${hours} giờ`,
         'attendance',
         updated?.id,
         req.ip,
