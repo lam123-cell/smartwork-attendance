@@ -179,19 +179,19 @@ export default function Dashboard() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-max text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       Tên nhân viên
                     </th>
-                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       Phòng ban
                     </th>
-                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       Giờ check-in
                     </th>
-                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       Trạng thái
                     </th>
                   </tr>
@@ -209,7 +209,7 @@ export default function Dashboard() {
                         <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {activity.name}
                         </td>
-                        <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                        <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           {activity.department}
                         </td>
                         <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">

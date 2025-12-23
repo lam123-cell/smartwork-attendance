@@ -285,8 +285,8 @@ export default function Reports() {
                   data={pieChartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={120}
+                  innerRadius={40}
+                  outerRadius={80}
                   paddingAngle={2}
                   dataKey="value"
                   label={({ name, value }) => `${name}: ${value}%`}
@@ -308,25 +308,25 @@ export default function Reports() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-max">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Nhân viên
                   </th>
-                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Phòng ban
                   </th>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Số ngày làm
                   </th>
-                  <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Số ngày đi muộn
                   </th>
-                  <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Tổng giờ
                   </th>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Hiệu suất (%)
                   </th>
                 </tr>
@@ -334,22 +334,22 @@ export default function Reports() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {details.map((report) => (
                   <tr key={report.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                       {report.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
                       {report.department}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
                       {report.workDays}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
                       {report.lateDays}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
                       {report.totalHours}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <td className="px-3 md:px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex items-center gap-2 justify-center">
                         <span className="text-sm text-gray-600">{report.efficiency}%</span>
                         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">

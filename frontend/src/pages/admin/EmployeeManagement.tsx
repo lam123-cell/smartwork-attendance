@@ -392,25 +392,25 @@ export default function EmployeeManagement() {
         {/* Employee Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-max text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Nhân viên
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden md:table-cell">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Email
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Phòng ban
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Vị trí
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Trạng thái
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider whitespace-nowrap">
                     Thao tác
                   </th>
                 </tr>
@@ -441,13 +441,13 @@ export default function EmployeeManagement() {
                           <span className="text-xs md:text-sm font-medium text-gray-900 truncate">{employee.full_name}</span>
                         </div>
                       </td>
-                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden md:table-cell">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                         <span className="text-xs md:text-sm text-gray-600 break-all">{employee.email}</span>
                       </td>
-                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden lg:table-cell">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                         <span className="text-xs md:text-sm text-gray-600">{employee.department_name || "—"}</span>
                       </td>
-                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap hidden lg:table-cell">
+                      <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                         <span className="text-xs md:text-sm text-gray-600">{employee.position || "—"}</span>
                       </td>
                       <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">

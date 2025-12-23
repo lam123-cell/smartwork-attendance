@@ -277,63 +277,63 @@ export default function AdminLeaveRequests() {
       {/* Modal xem lý do từ chối */}
       {showDetailModal && selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
-          <div className="relative w-full max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 text-white flex justify-between items-center">
-                <h3 className="text-2xl font-bold">Chi tiết từ chối</h3>
+          <div className="relative w-full max-w-md mx-auto max-h-[90vh] overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="bg-gradient-to-r from-red-600 to-red-700 px-4 md:px-8 py-4 md:py-6 text-white flex justify-between items-center flex-shrink-0">
+                <h3 className="text-lg md:text-2xl font-bold">Chi tiết từ chối</h3>
                 <button
                   onClick={() => {
                     setShowDetailModal(false);
                     setSelectedRequest(null);
                   }}
-                  className="text-white hover:opacity-75 transition"
+                  className="text-white hover:opacity-75 transition flex-shrink-0"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 md:w-6 h-5 md:h-6" />
                 </button>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto flex-1">
                 <div>
-                  <p className="text-sm text-gray-600 font-medium mb-2">Nhân viên</p>
-                  <p className="text-lg font-semibold text-gray-900">{selectedRequest.full_name}</p>
-                  <p className="text-sm text-gray-600">{selectedRequest.employee_code}</p>
+                  <p className="text-xs md:text-sm text-gray-600 font-medium mb-1 md:mb-2">Nhân viên</p>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">{selectedRequest.full_name}</p>
+                  <p className="text-xs md:text-sm text-gray-600">{selectedRequest.employee_code}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-600 font-medium mb-2">Loại phép</p>
-                  <p className="text-lg font-semibold text-gray-900">{selectedRequest.leave_type_name}</p>
+                  <p className="text-xs md:text-sm text-gray-600 font-medium mb-1 md:mb-2">Loại phép</p>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">{selectedRequest.leave_type_name}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 font-medium mb-2">Từ ngày</p>
-                    <p className="text-gray-900 font-semibold">
+                    <p className="text-xs md:text-sm text-gray-600 font-medium mb-1 md:mb-2">Từ ngày</p>
+                    <p className="text-sm md:text-base text-gray-900 font-semibold">
                       {new Date(selectedRequest.start_date).toLocaleDateString('vi-VN')}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium mb-2">Đến ngày</p>
-                    <p className="text-gray-900 font-semibold">
+                    <p className="text-xs md:text-sm text-gray-600 font-medium mb-1 md:mb-2">Đến ngày</p>
+                    <p className="text-sm md:text-base text-gray-900 font-semibold">
                       {new Date(selectedRequest.end_date).toLocaleDateString('vi-VN')}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-600 font-medium mb-2">Lý do từ chối</p>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-800 whitespace-pre-wrap">{selectedRequest.rejected_reason}</p>
+                  <p className="text-xs md:text-sm text-gray-600 font-medium mb-1 md:mb-2">Lý do từ chối</p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 md:p-4 max-h-40 overflow-y-auto">
+                    <p className="text-xs md:text-sm text-red-800 whitespace-pre-wrap">{selectedRequest.rejected_reason}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 px-8 py-5 flex justify-end border-t">
+              <div className="bg-gray-50 px-4 md:px-8 py-3 md:py-5 flex justify-end border-t flex-shrink-0">
                 <button
                   onClick={() => {
                     setShowDetailModal(false);
                     setSelectedRequest(null);
                   }}
-                  className="px-6 py-3 rounded-xl border border-gray-300 font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-4 md:px-6 py-2 md:py-3 rounded-xl border border-gray-300 font-medium text-xs md:text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   Đóng
                 </button>

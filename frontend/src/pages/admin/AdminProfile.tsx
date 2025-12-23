@@ -272,59 +272,59 @@ export default function AdminProfile() {
               </div>
 
               {/* Thông tin chi tiết */}
-              <div className="grid grid-cols-2 gap-8 mt-10 text-sm">
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Mã tài khoản</p>
-                  <p className="text-xl font-bold text-blue-900 mt-1">{profile?.employee_code || "—"}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8 mt-6 md:mt-10 text-xs md:text-sm">
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Mã tài khoản</p>
+                  <p className="text-lg md:text-xl font-bold text-blue-900 mt-1">{profile?.employee_code || "—"}</p>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Email</p>
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Email</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Mail className="w-5 h-5 text-blue-600" />
-                    <span className="font-bold text-blue-900">{profile?.email || "—"}</span>
+                    <Mail className="w-4 md:w-5 h-4 md:h-5 text-blue-600 flex-shrink-0" />
+                    <span className="font-bold text-blue-900 text-sm md:text-base break-all">{profile?.email || "—"}</span>
                   </div>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Số điện thoại</p>
-                  <p className="text-xl font-bold text-blue-900 mt-1">{profile?.phone || "—"}</p>
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Số điện thoại</p>
+                  <p className="text-lg md:text-xl font-bold text-blue-900 mt-1">{profile?.phone || "—"}</p>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Phòng ban</p>
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Phòng ban</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Briefcase className="w-5 h-5 text-blue-600" />
-                    <span className="font-bold text-blue-900">{profile?.department_name || "Quản trị"}</span>
+                    <Briefcase className="w-4 md:w-5 h-4 md:h-5 text-blue-600 flex-shrink-0" />
+                    <span className="font-bold text-blue-900 text-sm md:text-base">{profile?.department_name || "Quản trị"}</span>
                   </div>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Ngày vào làm</p>
-                  <p className="text-xl font-bold text-blue-900 mt-1">
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Ngày vào làm</p>
+                  <p className="text-lg md:text-xl font-bold text-blue-900 mt-1">
                     {profile?.start_date ? new Date(profile.start_date).toLocaleDateString("vi-VN") : "—"}
                   </p>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-5">
-                  <p className="text-blue-600 font-medium">Ngày sinh</p>
-                  <p className="text-xl font-bold text-blue-900 mt-1">
+                <div className="bg-blue-50 rounded-xl p-4 md:p-5">
+                  <p className="text-blue-600 font-medium text-xs md:text-base">Ngày sinh</p>
+                  <p className="text-lg md:text-xl font-bold text-blue-900 mt-1">
                     {profile?.date_of_birth ? new Date(profile.date_of_birth).toLocaleDateString("vi-VN") : "—"}
                   </p>
                 </div>
               </div>
 
               {/* Nút hành động */}
-              <div className="flex justify-center gap-6 mt-12">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-6 mt-6 md:mt-12 px-4 md:px-0">
                 <button
                   onClick={() => {
                     setEditForm(profile || {});
                     setShowEditModal(true);
                   }}
-                  className="px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg flex items-center gap-3"
+                  className="w-full sm:w-auto px-4 md:px-8 py-3 md:py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg flex items-center justify-center gap-2 md:gap-3 text-sm md:text-base"
                 >
-                  <Edit className="w-5 h-5" /> Chỉnh sửa thông tin
+                  <Edit className="w-4 md:w-5 h-4 md:h-5" /> Chỉnh sửa thông tin
                 </button>
                 <button
                   onClick={() => setShowChangePassword(true)}
-                  className="px-8 py-4 border-2 border-blue-600 text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition flex items-center gap-3"
+                  className="w-full sm:w-auto px-4 md:px-8 py-3 md:py-4 border-2 border-blue-600 text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition flex items-center justify-center gap-2 md:gap-3 text-sm md:text-base"
                 >
-                  <KeyRound className="w-5 h-5" /> Đổi mật khẩu
+                  <KeyRound className="w-4 md:w-5 h-4 md:h-5" /> Đổi mật khẩu
                 </button>
               </div>
             </div>
@@ -361,8 +361,8 @@ export default function AdminProfile() {
       {/* ====================== MODAL CHỈNH SỬA THÔNG TIN ====================== */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
-          <div className="relative w-full max-w-2xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+          <div className="relative w-full max-w-2xl mx-auto max-h-[95vh] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-full">
               {/* Header */}
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 md:px-8 py-4 md:py-6 text-white">
                 <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:gap-3">
@@ -378,7 +378,7 @@ export default function AdminProfile() {
                 </p>
               </div>
 
-              <div className="p-4 md:p-8 space-y-4 md:space-y-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
                   {/* Họ và tên */}
                   <div>
@@ -515,8 +515,8 @@ export default function AdminProfile() {
       {/* ====================== MODAL ĐỔI MẬT KHẨU ====================== */}
       {showChangePassword && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
-          <div className="relative w-full max-w-lg mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="relative w-full max-w-lg mx-auto max-h-[95vh] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-full">
               {/* Header */}
               <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 md:px-8 py-4 md:py-6 text-white">
                 <h3 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:gap-3">
@@ -528,7 +528,7 @@ export default function AdminProfile() {
                 </p>
               </div>
 
-              <div className="p-4 md:p-8 space-y-4 md:space-y-6">
+              <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto flex-1">
                 <div className="space-y-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">

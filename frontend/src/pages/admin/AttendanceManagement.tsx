@@ -368,17 +368,17 @@ export default function AttendanceManagement() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full min-w-max text-xs md:text-sm">
               <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                 <tr>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Tên nhân viên</th>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Ngày</th>
-                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Giờ check-in</th>
-                  <th className="hidden md:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Giờ check-out</th>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Trạng thái</th>
-                  <th className="hidden lg:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Muộn (phút)</th>
-                  <th className="hidden sm:table-cell px-2 md:px-4 lg:px-6 py-2 md:py-3 text-left">Tổng giờ</th>
-                  <th className="px-2 md:px-4 lg:px-6 py-2 md:py-3 text-center">Hành động</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Tên nhân viên</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Ngày</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Giờ check-in</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Giờ check-out</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Trạng thái</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Muộn (phút)</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-left whitespace-nowrap">Tổng giờ</th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-center whitespace-nowrap">Hành động</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -397,23 +397,23 @@ export default function AttendanceManagement() {
                 ) : (
                   filteredRecords.map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-3 font-medium text-gray-900">
+                      <td className="px-3 md:px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
                         {record.employee_name || "N/A"}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         {record.work_date ? format(new Date(record.work_date), "dd/MM/yyyy") : "--"}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         {record.check_in
                           ? new Date(record.check_in).toLocaleTimeString("vi-VN")
                           : "--"}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         {record.check_out
                           ? new Date(record.check_out).toLocaleTimeString("vi-VN")
                           : "--"}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         <span
                           className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
                             record.status
@@ -422,10 +422,10 @@ export default function AttendanceManagement() {
                           {getStatusLabel(record.status)}
                         </span>
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         {record.late_minutes > 0 ? `${record.late_minutes}` : "0"}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-3 md:px-6 py-3 whitespace-nowrap">
                         {record.total_hours != null ? `${Number(record.total_hours).toFixed(1)}h` : "--"}
                       </td>
                       <td className="px-6 py-3 text-center">
