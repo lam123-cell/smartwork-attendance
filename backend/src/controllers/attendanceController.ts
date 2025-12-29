@@ -8,14 +8,15 @@ import { getDistance } from 'geolib';
 
 const FIXED_SHIFT_ID = '00000000-0000-0000-0000-000000000001';
 
-// Hàm kiểm tra giờ check-in: Chỉ cho đến 9:30 AM giờ Việt Nam
-const isCheckInAllowed = () => {
+// Kiểm tra giờ check-in theo cấu hình hệ thống (mặc định đến 09:30 VN)
+const isCheckInAllowedBySettings = (cutoffHHMM?: string | null, enforce?: boolean | null) => {
+  if (enforce === false) return true; // không giới hạn
+  const cutoff = cutoffHHMM && /^\d{2}:\d{2}$/.test(cutoffHHMM) ? cutoffHHMM : '09:30';
+  const parts = cutoff.split(':');
+  const cutoffMinutes = (parseInt(parts[0] || '0', 10) * 60) + parseInt(parts[1] || '0', 10);
   const now = new Date();
-  const vnHour = (now.getUTCHours() + 7) % 24; // Giờ Việt Nam (UTC+7)
-  const vnMinute = now.getUTCMinutes();
-  if (vnHour > 17) return false;
-  if (vnHour === 17 && vnMinute > 30) return false;
-  return true;
+  const vnMinutes = (((now.getUTCHours() + 7) % 24) * 60) + now.getUTCMinutes();
+  return vnMinutes <= cutoffMinutes;
 };
 
 // Tiện ích lấy ngày theo định dạng YYYY-MM-DD
@@ -53,19 +54,23 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
   const userId = (req as any).user.id as string;
   let { latitude, longitude, accuracy, address, note } = req.body as any;
   
-  // Kiểm tra giờ check-in TRƯỚC (9:30 sáng)
-  if (!isCheckInAllowed()) {
+  // Lấy cấu hình hệ thống trước để áp dụng giới hạn giờ và GPS
+  const settings = await getSettings();
+
+  // Kiểm tra giờ check-in theo cấu hình
+  if (!isCheckInAllowedBySettings(settings?.checkin_cutoff_time ?? undefined, settings?.checkin_enforce ?? undefined)) {
+    const cutoffText = settings?.checkin_cutoff_time || '09:30';
     return res.status(400).json({ 
-      message: 'Quá giờ check-in cho phép (9:30 sáng). Vui lòng liên hệ quản lý.' 
+      message: `Quá giờ check-in cho phép (${cutoffText}). Vui lòng liên hệ quản lý.` 
     });
   }
 
   // Luôn gán ca hành chính 
   const shift_id = FIXED_SHIFT_ID;
 
-  // Kiểm tra vị trí GPS SAU
-  const settings = await getSettings();
-  const requireGps = settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
+  // Kiểm tra vị trí GPS theo cấu hình
+  const gpsEnabled = settings?.gps_check_enabled === true;
+  const requireGps = gpsEnabled && settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
   if (requireGps) {
     if (latitude == null || longitude == null) {
       return res.status(400).json({ message: 'Yêu cầu vị trí GPS' });
@@ -213,9 +218,10 @@ export const checkOut = async (req: Request, res: Response, next: NextFunction) 
       return res.status(400).json({ message: 'Bạn đã check-out rồi' });
     }
 
-    // Đảm bảo GPS khi có cấu hình
+    // Đảm bảo GPS khi có cấu hình và bật kiểm tra
     const settings = await getSettings();
-    const requireGps = settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
+    const gpsEnabled = settings?.gps_check_enabled === true;
+    const requireGps = gpsEnabled && settings?.gps_latitude != null && settings?.gps_longitude != null && (settings?.max_distance_meters ?? 0) > 0;
     if (requireGps) {
       if (latitude == null || longitude == null) {
         await client.query('ROLLBACK');

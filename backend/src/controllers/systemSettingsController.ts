@@ -33,6 +33,9 @@ export const updateSystemSettingsController = async (req: Request, res: Response
       gps_longitude: payload.gps_longitude,
       max_distance_meters: payload.max_distance_meters,
       auto_alert_violation: payload.auto_alert_violation,
+      gps_check_enabled: payload.gps_check_enabled,
+      checkin_cutoff_time: payload.checkin_cutoff_time,
+      checkin_enforce: payload.checkin_enforce,
     });
     return res.json({ settings: updated });
   } catch (err) {

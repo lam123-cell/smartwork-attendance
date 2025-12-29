@@ -11,6 +11,9 @@ export type SettingRow = {
   gps_longitude: number | null;
   max_distance_meters: number | null;
   auto_alert_violation: boolean | null;
+  gps_check_enabled?: boolean | null;
+  checkin_cutoff_time?: string | null; // HH:MM
+  checkin_enforce?: boolean | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -56,6 +59,9 @@ export const updateSettings = async (data: Partial<SettingRow>): Promise<Setting
     'gps_longitude',
     'max_distance_meters',
     'auto_alert_violation',
+    'gps_check_enabled',
+    'checkin_cutoff_time',
+    'checkin_enforce',
   ];
 
   const fields: string[] = [];

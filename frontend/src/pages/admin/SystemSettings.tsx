@@ -20,7 +20,12 @@ export default function SystemSettings() {
     end: "17:00",
     late: 15,
     early: 10,
-    autoAlert: true,
+    autoAlert: true, 
+  });
+
+  const [checkinPolicy, setCheckinPolicy] = useState({
+    enforce: true,
+    cutoff: "09:30",
   });
 
   const [gpsSettings, setGpsSettings] = useState({
@@ -28,6 +33,8 @@ export default function SystemSettings() {
     longitude: 0,
     maxDistance: 200,
   });
+
+  const [gpsCheckEnabled, setGpsCheckEnabled] = useState<boolean>(true);
 
   const [shiftId, setShiftId] = useState<string | null>(null);
 
@@ -53,6 +60,11 @@ export default function SystemSettings() {
         latitude: Number(s.gps_latitude ?? 0),
         longitude: Number(s.gps_longitude ?? 0),
         maxDistance: Number(s.max_distance_meters ?? 200),
+      });
+      setGpsCheckEnabled(Boolean(s.gps_check_enabled ?? true));
+      setCheckinPolicy({
+        enforce: s.checkin_enforce !== false,
+        cutoff: s.checkin_cutoff_time || "09:30",
       });
       const firstShift = shiftRes.data.shifts?.[0];
       setShiftId(firstShift?.id || null);
@@ -90,6 +102,9 @@ export default function SystemSettings() {
         gps_longitude: gpsSettings.longitude,
         max_distance_meters: gpsSettings.maxDistance,
         auto_alert_violation: workTime.autoAlert,
+        gps_check_enabled: gpsCheckEnabled,
+        checkin_cutoff_time: normalizeTime(checkinPolicy.cutoff),
+        checkin_enforce: checkinPolicy.enforce,
         // optional GPS fields could be added later
       });
 
@@ -323,18 +338,29 @@ export default function SystemSettings() {
               />
             </div>
 
-            <div className="md:col-span-2 flex items-center gap-2 mt-1">
-              <input
-                type="checkbox"
-                checked={workTime.autoAlert}
-                onChange={(e) =>
-                  setWorkTime({ ...workTime, autoAlert: e.target.checked })
-                }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-              />
-              <span className="text-sm text-gray-700">
-                Tự động cảnh báo khi vi phạm thời gian
-              </span>
+            {/* Giới hạn giờ check-in */}
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Giờ giới hạn check-in</label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+                  <input
+                    type="time"
+                    value={checkinPolicy.cutoff}
+                    onChange={(e) => setCheckinPolicy({ ...checkinPolicy, cutoff: e.target.value })}
+                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-6 md:mt-7">
+                <input
+                  type="checkbox"
+                  checked={checkinPolicy.enforce}
+                  onChange={(e) => setCheckinPolicy({ ...checkinPolicy, enforce: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                />
+                <span className="text-sm text-gray-700">Bật giới hạn giờ check-in</span>
+              </div>
             </div>
           </div>
 
@@ -353,6 +379,15 @@ export default function SystemSettings() {
         {/* Cấu hình GPS chấm công */}
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 md:p-6 space-y-3 md:space-y-4">
           <h3 className="font-semibold text-gray-900 text-lg md:text-base">Cấu hình GPS chấm công</h3>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={gpsCheckEnabled}
+              onChange={(e) => setGpsCheckEnabled(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+            />
+            <span className="text-sm text-gray-700">Bật kiểm tra GPS khi check-in/check-out</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Vĩ độ công ty</label>
